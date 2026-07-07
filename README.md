@@ -4,7 +4,7 @@
 >
 > 把论文和难读长文变成可阅读、可交互、可部署的双语学习网站。
 
-[![Version](https://img.shields.io/badge/version-v0.1.0-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site/releases/tag/v0.1.0)
+[![Version](https://img.shields.io/badge/version-v0.1.1-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site/releases/tag/v0.1.1)
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827)](./SKILL.md)
 [![Static Site](https://img.shields.io/badge/output-static%20HTML-16a34a)](#what-it-builds--它会生成什么)
 
@@ -117,8 +117,16 @@ Use $paper-to-learning-site to turn this paper into an interactive bilingual lea
 
 仓库内置了一个基础静态站点检查脚本：
 
+开工前先检查工具链：
+
 ```bash
-python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html>
+python3 ~/.codex/skills/paper-to-learning-site/scripts/preflight_learning_site.py
+```
+
+交付前检查网页：
+
+```bash
+python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html> --strict
 ```
 
 它会检查：
@@ -128,6 +136,10 @@ python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <s
 - 图片是否缺少 `alt`
 - 是否把 PDF iframe 当成主要阅读方式
 - 是否缺少明显的“原文”或“说人话”阅读层
+- 是否把全文藏在折叠的 `<pre>` 原文块里
+- 是否缺少中英 / 中文 / EN only 这类语言模式
+- 是否用 SVG 小框图替代 Image 2 生成图
+- 是否缺少 `data/learning-site-manifest.json`
 
 这个脚本不是完整 QA，但能提前抓住一些很容易破坏阅读体验的问题。
 
@@ -245,16 +257,22 @@ If you ask it to proceed with defaults, it will explain hard concepts and experi
 
 ## Static Audit Script
 
+Run preflight before implementation:
+
+```bash
+python3 ~/.codex/skills/paper-to-learning-site/scripts/preflight_learning_site.py
+```
+
 Run:
 
 ```bash
-python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html>
+python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html> --strict
 ```
 
-The script checks for missing local image assets, duplicate IDs, weak image alt text, PDF iframe patterns, and missing source/plain-language reading layers.
+The scripts check tool availability, missing local image assets, duplicate IDs, weak image alt text, PDF iframe patterns, buried raw source text, missing language modes, SVG-only generated diagrams, and missing coverage manifests.
 
 ## Status
 
-Current release: `v0.1.0`.
+Current release: `v0.1.1`.
 
 This is an early but usable version focused on the workflow and quality standards. Future versions may add stronger templates, extraction utilities, sample sites, and richer validation.

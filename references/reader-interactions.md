@@ -11,6 +11,7 @@ Recommended layout:
 - side learning panel that changes with the active paragraph
 - figure/table drawer for close reading
 - term popovers opened from underlined inline terms
+- language mode segmented control for non-Chinese sources
 
 ## Interaction rules
 
@@ -20,6 +21,7 @@ Recommended layout:
 - Keep terminology and figures close to the paragraph where they matter.
 - Let users expand deeper explanations without forcing every detail into the main line.
 - Preserve reading flow: the main text should still make sense if all drawers are closed.
+- Do not make the reader open an appendix or raw extraction panel to access the paper's real text.
 
 ## Visual design
 

@@ -4,6 +4,8 @@
 
 Use Image 2 or the available image generation tool to create diagrams that reduce cognitive load. Generate more visuals when the paper has abstract mechanisms, multi-step methods, experiments, or unfamiliar terms.
 
+Do not silently replace requested Image 2 diagrams with hand-written SVG diagrams. If no image-generation tool is available, stop and report that generated teaching visuals are blocked or ask whether a lower-fidelity SVG fallback is acceptable.
+
 Minimum default:
 
 - at least one generated explainer image per chapter
@@ -34,6 +36,7 @@ For generated visuals, specify:
 - no long text baked into image
 - leave clean areas for HTML labels if needed
 - output should be legible at web card size
+- produce bitmap assets (`.png`, `.jpg`, or `.webp`) unless the image tool returns another real generated-image format
 
 Example prompt:
 
@@ -51,3 +54,15 @@ Every generated image needs nearby HTML explanation:
 - what simplification it makes
 
 Do not rely on an image alone for factual explanation.
+
+## Provenance
+
+Record generated visuals in `data/learning-site-manifest.json`:
+
+- file path
+- model/tool used
+- chapter/section
+- teaching purpose
+- prompt summary
+
+If the asset was manually drawn SVG, mark it as `manual-svg-fallback` and do not count it as an Image 2 generated visual.

@@ -23,6 +23,7 @@ Create a working inventory before designing:
 - key terms and prerequisites
 - claims and evidence
 - reader pain points likely to block comprehension
+- available tools from preflight: extraction, figure rendering, Image 2/image generation, browser QA, deployment
 
 ## Completeness rule
 
@@ -35,6 +36,8 @@ The learning site must not become a summary-only product. For every included mai
 
 For very long papers, deliver in stages only after telling the user exactly what is included in the current version and what is deferred. Main text comes before appendix deep dives unless the user asks otherwise.
 
+Do not satisfy "complete paper text" by hiding raw extraction inside a collapsed `<pre>` block. The main reader must expose paragraph-level source text paired with translation/explanation. Collapsed raw source can be a secondary appendix only.
+
 ## Architecture decision
 
 Default to a chapter-switching reader:
@@ -43,6 +46,7 @@ Default to a chapter-switching reader:
 - right/main reading pane with original/translation/explanation
 - left or side learning pane for synchronized notes, terms, figures, and chapter logic
 - drawers or popovers for deep explanations
+- visible language mode controls for non-Chinese sources
 
 Adapt when the source suggests a better form:
 
