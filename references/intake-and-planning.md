@@ -1,0 +1,57 @@
+# Intake And Planning
+
+## Required intake questions
+
+Ask before implementation unless the user already answered or explicitly asked to proceed with defaults:
+
+1. 是否有想重点探讨、重点解释、或者希望读者特别关注的内容？
+2. 是先返回本地 HTML，还是需要部署到 Vercel？
+3. 默认按“无专业背景大学生”的认知水平解释，可以吗？
+
+If the user is impatient or says "直接做", use defaults and state them briefly before starting.
+
+## Source inventory
+
+Create a working inventory before designing:
+
+- source files and URLs
+- document title and best short title
+- source language
+- sections/chapters
+- paragraph count per section
+- all figures, tables, charts, equations, screenshots, appendices
+- key terms and prerequisites
+- claims and evidence
+- reader pain points likely to block comprehension
+
+## Completeness rule
+
+The learning site must not become a summary-only product. For every included main-section paragraph, provide:
+
+- original paragraph or faithful source text
+- translation if the source is not Chinese
+- plain-language explanation
+- links to terms, figures, equations, or notes when relevant
+
+For very long papers, deliver in stages only after telling the user exactly what is included in the current version and what is deferred. Main text comes before appendix deep dives unless the user asks otherwise.
+
+## Architecture decision
+
+Default to a chapter-switching reader:
+
+- top or side chapter map
+- right/main reading pane with original/translation/explanation
+- left or side learning pane for synchronized notes, terms, figures, and chapter logic
+- drawers or popovers for deep explanations
+
+Adapt when the source suggests a better form:
+
+- experimental paper: evidence trail and figure-led reading
+- systems paper: architecture map plus step-by-step walkthrough
+- theory paper: concept ladder plus proof/argument map
+- survey/report: topic atlas plus comparison tables
+- narrative essay: scene/argument timeline plus close reading notes
+
+## Naming
+
+Use `Learn <paper short title>` for the page title, package folder, and Vercel project name unless the user provides a name.

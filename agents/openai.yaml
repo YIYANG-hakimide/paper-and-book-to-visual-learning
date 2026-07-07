@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper to Learning Site"
+  short_description: "Create guided bilingual paper learning websites"
+  default_prompt: "Use $paper-to-learning-site to turn a paper into a complete interactive HTML learning site."
