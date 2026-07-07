@@ -82,7 +82,7 @@ Use `scripts/preflight_learning_site.py` before implementation. Use `scripts/aud
    - Use source screenshots for original figures/tables, but never screenshot blocks of text that should be selectable HTML text.
    - Use Image 2 diagrams for conceptual understanding: workflows, metaphors, system maps, experiment setup, training loops, comparison summaries, and "what the author is doing next" transitions.
    - If Image 2 is unavailable, stop and tell the user before substituting SVG/manual diagrams. Do not silently downgrade.
-   - Keep generated-image text minimal; put precise labels and bilingual explanations in HTML.
+   - Generated images may include short labels and a few concise explanatory callouts when that improves comprehension; keep long definitions, bilingual paragraphs, and precise evidence explanations in HTML.
 
 5. **Build the site**
    - Prefer a static HTML/CSS/JS package unless the user asks for a framework or the project already has one.
