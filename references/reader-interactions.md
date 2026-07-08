@@ -16,6 +16,8 @@ Recommended layout:
 ## Interaction rules
 
 - Every popover, drawer, bubble, and floating panel must have an obvious close state.
+- Term explanations should not hide the active paragraph. On desktop, prefer a right/side panel, adjacent annotation rail, or anchored panel that does not overlap the current `.reading-block`; on mobile, use a bottom sheet or in-flow accordion.
+- If a modal or drawer is unavoidable, it must include `回到原词/回到原文`, close on Escape, and return focus to the clicked term.
 - Clicking "continue" should move to the next chapter/landmark, not repeat the current content.
 - If chapter switching is primary, avoid making the user scroll through unrelated repeated sections.
 - Keep terminology and figures close to the paragraph where they matter.
@@ -23,6 +25,7 @@ Recommended layout:
 - Each paragraph should have a stable anchor so side notes, figure drawers, and popovers can point back to the source sentence.
 - Each reading block should expose a stable `data-source-id` that matches the manifest.
 - Side panels should track the active paragraph and expose "回到原文" or equivalent anchors for notes, figures, and claims.
+- Side notes should be written as public learning notes: `本段核心`, `为什么重要`, `怎么看证据`, `容易误解`. Do not expose internal process, audit, asset-generation prompts, target-reader, or reviewer-planning language.
 - Use semantic highlight colors consistently, for example: method terms, evidence, limitations, and definitions should not share arbitrary colors.
 - Let users expand deeper explanations without forcing every detail into the main line.
 - Preserve reading flow: the main text should still make sense if all drawers are closed.
@@ -33,6 +36,8 @@ Recommended layout:
 - A knowledge map, quiz, or Feynman card must link back to the paragraph/figure that taught the concept; otherwise it becomes disconnected decoration.
 - Language mode must be a real stateful interaction. It should update visible layers without losing the active chapter, active paragraph, synchronized side note, or open drawer context.
 - Do not leave `href="#"`, unlabeled icon controls, repeated "查看详情", or placeholder buttons in the final page.
+- Do not leave chapter tabs, question tabs, language modes, quiz choices, or figure buttons that open a title-only or empty panel. If a control exists, test every state.
+- For static HTML, use the bundled `assets/reader-runtime.js` or match its DOM contract. Do not bind chapter navigation with `querySelectorAll('[data-chapter]')`, because reading blocks may also carry `data-chapter`; use `button[data-chapter], a[data-chapter], [role="tab"][data-chapter]`.
 
 ## Interaction inventory
 
@@ -43,6 +48,7 @@ Before final delivery, record and test each meaningful interaction:
 - close method: close button, Escape, outside click, back action, or return link
 - source linkage: `source_id`, `figure_id`, `claim_id`, or chapter id
 - feedback: quiz answer, visualizer state, active tab, or highlighted evidence
+- focus/return path: after close, the user should be back at the term, figure, table, or paragraph that launched the interaction
 
 Delete interactions that cannot pass this inventory. A static card is better than a fake button.
 
@@ -66,6 +72,8 @@ Avoid:
 - detached "related terms" rows that force the reader to guess which sentence the term belongs to
 - a term popover triggered only from a glossary chip when the term appears unclickable in the paragraph
 - visible internal workflow labels such as manifest, preflight, regression, generated asset, reader level, or target audience notes
+- modal term explanations that cover the exact paragraph the user was reading
+- question or quiz tabs that have no source paragraph, evidence, or feedback for choices 3/4/5/6
 
 ## Responsive and accessibility checks
 

@@ -24,6 +24,8 @@ Choose the type that fits the learning job:
 - before/after or baseline/variant comparison
 - timeline or chapter bridge
 - annotated scene diagram for virtual worlds or simulations
+- data-first editorial chart: preserve exact values in HTML/nearby text and use the image to make the comparison readable
+- micro-diagram sequence: several smaller images for a complex mechanism instead of one overloaded poster
 
 ## Prompt pattern
 
@@ -39,6 +41,7 @@ For generated visuals, specify:
 - avoid factual scores, rankings, percentages, or improvement claims inside the image unless those values are sourced and also explained in nearby HTML
 - leave clean areas for HTML labels or expanded explanations when needed
 - output should be legible at web card size
+- if the concept needs many labels, create several simpler images rather than one crowded image
 - produce bitmap assets (`.png`, `.jpg`, or `.webp`) unless the image tool returns another real generated-image format
 
 Example prompt:
@@ -59,6 +62,8 @@ Every generated image needs nearby HTML explanation:
 Do not rely on an image alone for factual explanation.
 
 Small amounts of text inside generated images are useful for orientation. The rule is "brief and visual", not "text-free": use short stage names, arrows, labels, or callout phrases inside the bitmap, then put the full teaching explanation in selectable HTML.
+
+Borrow Guizang-style discipline for educational diagrams when appropriate: one central relationship, 3-5 short Chinese labels, quiet background, strong safe margins, and no dense legend inside the bitmap. If labels are wrong, tiny, or garbled, regenerate instead of accepting the asset.
 
 Do not prompt Chinese-bilingual explainer images with English-only labels such as "Sequential bottleneck" or "Parallel training" unless the user explicitly wants English-only visuals. Prefer `顺序瓶颈 / sequential bottleneck` or just `顺序瓶颈` when the concept is explained nearby in HTML.
 

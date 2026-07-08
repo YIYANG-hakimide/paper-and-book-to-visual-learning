@@ -18,6 +18,7 @@ Rules for screenshots:
 - Never screenshot normal prose as the only source text.
 - If a source screenshot is used, pair it with selectable text, translation/explanation, source id, page number, and a reason such as `formula layout`, `table layout`, or `multi-panel figure`.
 - Crop tightly. A giant page screenshot is usually a failure unless the page layout is itself the object of study.
+- If the image is dense, the default layout should not be a cramped left-image/right-text split. Use image-on-top/text-below, a wide figure band, zoomable evidence view, or split the figure into subfigures.
 
 ## Layout Selection
 
@@ -27,6 +28,7 @@ Choose per section, not globally:
 - Method: `interleaved-close-reading`, formula breakdowns, system diagrams, and inline terms.
 - Architecture/system papers: reader plus large diagram rail; use hotspots and "follow the data" arrows.
 - Experiments/results: `figure-led` with table/figure on one side and "怎么看 / 相比谁 / 结论 / 限制" on the other.
+- Dense experiments/results: use a wide source figure/table first, then explanation below, or split into row/panel cards. The reader must be able to inspect labels and numbers before reading the conclusion.
 - Theory/math: formula card with symbol table, plain example, and derivation steps.
 - Survey/related work: timeline, lineage map, comparison table, and chapter checkpoints.
 - Long papers: chapter switching plus review cards; do not make one endless page.
@@ -57,6 +59,7 @@ Before coding, write a short design brief:
 - reading density: light first pass, close reading, evidence-heavy, or review-heavy
 - layout modes chosen for each chapter type
 - visual assets needed: original figures, cropped subfigures, Image 2 diagrams, icons, generated metaphors
+- design-system rules: tokens for type, color, spacing, figure sizes, panel behavior, and mobile states. Inspired by design-md style specs, write concrete constraints instead of vague style words.
 
 The style does not need to match Agentopia. Agentopia is only a floor for care and interaction. Aim for a site that feels designed for this paper.
 
@@ -69,6 +72,7 @@ After implementation:
 - Check mobile: no horizontal overflow; bilingual blocks stack cleanly; panels are closable.
 - Smoke test: switch chapter, switch language, open/close term, open/close figure/table explanation, activate a visual/quiz/review control.
 - Record `layout_strategy`, `source_rendering_modes`, `source_screenshot_blocks`, and `interaction_inventory` in the manifest.
+- Record `visual_readability_checks` and note whether dense figures used large view, split panels, or image-top layout.
 
 ## Reference Inspirations
 

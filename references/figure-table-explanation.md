@@ -12,10 +12,13 @@ For large composite figures:
 - split into subfigures
 - explain each subfigure beside or below it
 - use callouts or numbered hotspots when the visual has multiple parts
+- if splitting is not feasible, place the full image in a wide image-first module and put explanation below it
+- provide a real large-view mode when labels, axes, or table cells are not readable in the default module
 
 For tables:
 
 - place the table on one side and the explanation on the other when space allows
+- if the table becomes too small in side-by-side layout, put the table above and explanation below, or split rows/groups into separate cards
 - explain rows, columns, metrics, and baselines before discussing conclusions
 - highlight the cells that support the current claim
 - state the exact comparison: "compared with X, Y is higher/lower by Z" when the source supports it
@@ -61,3 +64,14 @@ Readers often confuse "the simulated world improved" with "the model improved af
 ## Screenshots
 
 Use source screenshots for figures, tables, UI captures, diagrams, and visual evidence. Do not screenshot long text blocks. Crop tightly enough that the reader can see the relevant evidence without opening a giant image.
+
+If a screenshot contains multiple logical panels, crop each panel separately when the reader needs panel-level interpretation. A single giant screenshot plus one generic caption is not enough for a dense table or multi-panel figure.
+
+## Redrawn Data Visuals
+
+When using Image 2 or another illustration model to redraw a chart/table as a teaching visual, inherit the data semantics only:
+
+- keep chart type, title, axis labels, units, ranges, tick labels, category order, values, and uncertainty/error bars
+- discard cramped screenshot styling, arbitrary colors, shadows, and weak layout
+- keep exact values in nearby HTML and in the manifest when values appear in the image
+- reject attractive visuals with wrong values, swapped order, missing axes, or unreadable labels

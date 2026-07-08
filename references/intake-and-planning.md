@@ -25,6 +25,22 @@ Create a working inventory before designing:
 - reader pain points likely to block comprehension
 - available tools from preflight: extraction, figure rendering, Image 2/image generation, browser QA, deployment
 
+## Paper-Specific Design Brief
+
+Before implementation, write a design brief with concrete rules, not mood words:
+
+- paper personality and reader emotion
+- source artifact motif: figures, equations, screenshots, tables, architecture diagrams, or visual scenes
+- typography roles for original text, Chinese reading, plain explanation, notes, captions, controls, formulas/code
+- color semantics for terms, evidence, limitations, definitions, and active state
+- spacing rhythm, source-text line width, and reading density
+- component rules for reading blocks, side notes, term panels, figure modules, quizzes, and large-image views
+- responsive behavior: desktop, tablet, mobile, touch target size, panel collapse strategy
+- figure/table strategy: large view, split panels, image-top/text-bottom, or redraw/annotation approach
+- what this paper-specific site should avoid, such as generic AI gradients, dashboard grids, tiny figures, or decorative images
+
+This is inspired by design-system `DESIGN.md` files: colors, typography, components, and states should be explicit enough that another agent can implement them.
+
 ## Completeness rule
 
 The learning site must not become a summary-only product. For every included main-section paragraph, provide:

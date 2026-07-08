@@ -8,6 +8,7 @@ Create a static site unless the user or existing project requires a framework:
 learn-paper-title/
   index.html
   assets/
+    reader-runtime.js
     figures/
     diagrams/
     screenshots/
@@ -16,6 +17,8 @@ learn-paper-title/
 ```
 
 Use semantic HTML, scoped CSS, and small vanilla JS for chapter switching, drawers, popovers, figure hotspots, reading progress, and synchronized notes.
+
+For static HTML, prefer copying `assets/reader-runtime.js` from this skill into the output site or inlining it after the page data. Follow `references/reader-runtime-contract.md` for the DOM contract. Do not hand-roll chapter/language/term/figure/quiz state unless the project framework already provides an equivalent tested component.
 
 ## Required content structures
 
@@ -71,7 +74,23 @@ Create `data/learning-site-manifest.json` for every site:
   "layout_strategy": {
     "summary": "stacked first-pass reader with figure-led experiment sections",
     "desktop_first_viewport_checked": true,
-    "mobile_layout_checked": true
+    "mobile_layout_checked": true,
+    "term_panel_non_overlap_checked": true,
+    "empty_state_switching_checked": true
+  },
+  "framework_runtime": {
+    "equivalent_reader_runtime": false,
+    "runtime_asset": "assets/reader-runtime.js"
+  },
+  "visual_readability_checks": {
+    "dense_figures_default_readable": true,
+    "large_view_tested": true,
+    "split_panels_used": ["fig2", "table3"],
+    "minimum_rendered_width_px": 560
+  },
+  "side_note_public_copy_review": {
+    "checked": true,
+    "forbidden_patterns_found": []
   },
   "source_rendering_modes": ["parallel-bilingual", "stacked-bilingual", "interleaved-close-reading", "figure-led"],
   "source_screenshot_blocks": [
@@ -95,7 +114,9 @@ Create `data/learning-site-manifest.json` for every site:
         "trigger": "inline term button",
         "state_change": "opens term drawer and sets aria-expanded=true",
         "close_method": "close button and Escape",
-        "linked_source_ids": ["sec3-p04"]
+        "linked_source_ids": ["sec3-p04"],
+        "return_path": "focus returns to trigger and panel links back to block-sec3-p04",
+        "non_overlap_checked": true
       }
     ]
   },
@@ -107,6 +128,7 @@ Create `data/learning-site-manifest.json` for every site:
       "page_end": 5,
       "order": 34,
       "source_text_hash": "sha256:...",
+      "normalized_snippet": "Self-attention, sometimes called intra-attention...",
       "source_word_count": 92,
       "rendered_block_id": "block-sec3-p04",
       "chapter_id": "chapter-3"
@@ -135,6 +157,16 @@ Create `data/learning-site-manifest.json` for every site:
       "is_inline": true
     }
   ],
+  "term_explanations": {
+    "self-attention": {
+      "definition": "同一序列内部的位置互相查看并加权汇总信息。",
+      "plain": "一句话里的每个词都能直接看句中其他词。",
+      "paper_meaning": "本文用它替代 RNN/CNN 的核心序列计算。",
+      "author_use": "encoder 和 decoder 都使用 self-attention，decoder 还加 mask。",
+      "common_misread": "attention 权重能辅助解释，但不等于严格因果证明。",
+      "linked_source_ids": ["sec3-p04"]
+    }
+  },
   "paper_figures": [
     {
       "figure_id": "fig1",
@@ -142,7 +174,7 @@ Create `data/learning-site-manifest.json` for every site:
       "source_page": 3,
       "primary_rendered_block_id": "block-sec3-p04",
       "linked_source_ids": ["sec3-p04"],
-      "explanation_cues_present": ["它是什么", "怎么看", "相比谁", "结论是什么", "不能推出什么", "回到原文"]
+      "explanation_cues_present": ["它是什么", "怎么看", "相比谁", "结论是什么", "为什么重要", "不能推出什么", "回到原文"]
     }
   ],
   "generated_visuals": [
@@ -166,7 +198,7 @@ Create `data/learning-site-manifest.json` for every site:
   "tools_used": {
     "pdf_text": "pdfplumber",
     "figure_rendering": "pdftoppm",
-    "browser_qa": "system Chrome headless"
+    "browser_qa": "Playwright with system Chrome"
   }
 }
 ```
@@ -182,15 +214,20 @@ Use manifest fields to make reader-quality promises auditable:
 - `generated_visual_language`: use values such as `zh-dominant`, `en-dominant`, or `mixed`; Chinese-bilingual sites should usually be `zh-dominant`.
 - `design_brief`: public-facing visual direction chosen for this paper. Include visual direction, motif, typography plan, and why the site is not a generic dashboard/template.
 - `layout_strategy`: what layout system was chosen and whether desktop/mobile checks were run.
+- `framework_runtime`: use `runtime_asset: assets/reader-runtime.js` for static HTML, or set `equivalent_reader_runtime=true` only when a framework component provides the same tested chapter/language/term/figure/quiz contract.
+- `visual_readability_checks`: evidence that dense figures/tables/generated diagrams are readable, split, or supported by a real large view.
+- `side_note_public_copy_review`: whether side notes and public labels were checked for internal/process wording.
 - `source_rendering_modes`: the actual modes used, such as `parallel-bilingual`, `stacked-bilingual`, `interleaved-close-reading`, `figure-led`, or `facsimile-plus-html`.
 - `source_screenshot_blocks`: every original-text screenshot/facsimile block with source id, reason, path, and selectable text fallback id.
 - `interaction_inventory`: count or describe real learning interactions: inline terms, figure hotspots, formula breakdowns, comparison tables, quizzes, knowledge maps, method chats, visualizers. Include tested controls with trigger, state change, close method, and linked source ids. Delete or implement any button that has no real state change.
-- `source_blocks`: per-paragraph evidence that the page can trace rendered text back to the extracted paper.
+- `source_blocks`: per-paragraph evidence that the page can trace rendered text back to the extracted paper. Include `source_text_hash` or `normalized_snippet` so the rendered source can be checked against the extraction inventory.
 - `chapter_coverage`: per-chapter expected/rendered source ids. Do not rely only on total counts.
 - `term_anchors`: inline trigger inventory. `is_inline` should be true for the main learning entry point.
+- `term_explanations`: per-term explanation ladder. Include definition, plain analogy, paper-specific meaning, author use, common misunderstanding, and linked source ids.
 - `paper_figures`: each source figure/table's primary in-flow location, linked paragraph ids, and explanation cues.
 - `generated_visuals`: model, language, source linkage, teaching concept, reader question, why an image was needed, and factual-value provenance for each generated teaching image.
 - `omitted_source_blocks`: every skipped paragraph/table/appendix block, with a reader-facing reason.
+- `tools_used.browser_qa`: record the real browser QA route. Prefer `Playwright with system Chrome` or `Playwright managed Chromium`; use `Chrome CLI fallback` only when Playwright is unavailable.
 
 ## Static reader standards
 
@@ -206,6 +243,9 @@ Use manifest fields to make reader-quality promises auditable:
 - Generated-diagram captions should explain the learning purpose, not expose asset provenance. Avoid public labels like "生成教学图资产", "Generated explainer", or prompt summaries in visible UI.
 - Image `alt`, `title`, and `aria-label` are public UI too. Use learner-facing descriptions such as `Q/K/V 概念图` or `Figure 1 架构解读`, not `Generated explainer diagram`.
 - Visible buttons should describe the learning action: `读 Figure 1 架构图`, `放大 Table 2 结果表`, `解释 BLEU`, not repeated generic labels like `打开图表抽屉`.
+- Term panels should preserve reading context: no overlap with the active paragraph on desktop, bottom sheet or in-flow accordion on mobile, close/Escape support, return link, and focus return.
+- Chapter panels should be activated with explicit state: set `data-active="true"` on the active panel and remove it from inactive panels. Never combine `[data-active="true"]` CSS with `toggleAttribute("data-active", true)`, because that creates an empty attribute and can make clicked chapters disappear.
+- Dense figures/tables should not default to tiny side-by-side thumbnails. Use a wide source image, image-top/text-bottom, split panels, or a large view that is actually larger than the thumbnail.
 - Every reading block should carry a stable `data-source-id` and contain source, translation/Chinese reading, and plain-language explanation in the main flow.
 - At least one real learning action should appear in each chapter when useful: inspect evidence, explain a term, break down a formula, compare a baseline, answer a quiz, or open a concept map.
 - Language mode must actually switch reading layers: `中英` shows original and Chinese reading, `中文` hides or de-emphasizes original text while preserving a return-to-original affordance, and `EN only` shows source text while keeping term/figure anchors usable. The active paragraph and side panel must not lose sync after switching.
@@ -235,3 +275,13 @@ For final delivery, run strict mode:
 ```bash
 python3 /path/to/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html> --strict
 ```
+
+For fast local iteration only, you may run:
+
+```bash
+python3 /path/to/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html> --strict --skip-browser
+```
+
+`--skip-browser` is not acceptable for final delivery because it does not check first viewport, mobile overflow, term overlap, figure large views, or quiz state changes.
+
+For maintenance work, also run the strict audit against at least one known-bad site and confirm it now fails for the intended reader-experience defects.
