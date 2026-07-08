@@ -307,23 +307,26 @@ setTimeout(() => {
     with tempfile.TemporaryDirectory() as tmp:
         probe_path = Path(tmp) / path.name
         probe_path.write_text(source, encoding="utf-8")
-        result = subprocess.run(
-            [
-                chrome,
-                "--headless=new",
-                "--disable-gpu",
-                "--no-first-run",
-                "--no-default-browser-check",
-                "--window-size=390,1200",
-                "--virtual-time-budget=1000",
-                "--dump-dom",
-                probe_path.as_uri(),
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            timeout=20,
-        )
+        try:
+            result = subprocess.run(
+                [
+                    chrome,
+                    "--headless=new",
+                    "--disable-gpu",
+                    "--no-first-run",
+                    "--no-default-browser-check",
+                    "--window-size=390,1200",
+                    "--virtual-time-budget=1000",
+                    "--dump-dom",
+                    probe_path.as_uri(),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=20,
+            )
+        except subprocess.TimeoutExpired:
+            return [], [f"{path}: mobile render overflow check timed out"]
     if result.returncode != 0:
         return [], [f"{path}: mobile render overflow check failed to run: {result.stderr.strip()[:240]}"]
 
@@ -348,6 +351,132 @@ setTimeout(() => {
             for item in offenders[:4]
         )
         errors.append(f"{path}: mobile elements extend outside viewport: {preview}")
+    return errors, warnings
+
+
+def run_desktop_first_viewport_check(path: Path, root: Path) -> tuple[list[str], list[str]]:
+    chrome = chrome_path()
+    if not chrome:
+        return [], [f"{path}: Chrome/Chromium not found; desktop first-viewport reader check skipped"]
+
+    source = path.read_text(encoding="utf-8", errors="replace")
+    base_href = root.resolve().as_uri().rstrip("/") + "/"
+    probe = r"""
+<script>
+setTimeout(() => {
+  const groups = {
+    title: 'h1,[data-paper-title],.paper-title',
+    chapterNav: '.chapter-map,.chapter-tab,.map-item,.chapter-button,[role="tablist"]',
+    languageMode: '.language-mode,.language-toggle,.lang-toggle,.mode-toggle,.segmented-language,[data-language-mode]',
+    sourceText: '.source-text,.source-paragraph,[data-source-id]',
+    chineseReading: '.translation-text,.plain-text,.chinese-reading,.cn-reading',
+    learningAffordance: '.term,[data-term],[data-term-id],.figure-note,.figure-explanation,.source-figure-note,.marginalia,.side-note,[data-open-drawer],.term-popover'
+  };
+  const visible = {};
+  for (const [key, selector] of Object.entries(groups)) {
+    visible[key] = Array.from(document.querySelectorAll(selector)).some((el) => {
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0 && rect.left < window.innerWidth && rect.right > 0;
+    });
+  }
+  const offenders = [];
+  for (const el of document.querySelectorAll('body,header,.shell,.reader-card,.chapter-map,.reading-block,.source-text,.translation-text,.plain-text,p,button')) {
+    const rect = el.getBoundingClientRect();
+    const isRootBox = el === document.body || el === document.documentElement;
+    if (rect.width > 0 && (rect.right > window.innerWidth + 2 || rect.left < -2 || (!isRootBox && el.scrollWidth > el.clientWidth + 2))) {
+      offenders.push({
+        tag: el.tagName.toLowerCase(),
+        className: el.className || '',
+        right: Math.round(rect.right),
+        clientWidth: Math.round(el.clientWidth || 0),
+        scrollWidth: Math.round(el.scrollWidth || 0),
+        text: (el.innerText || '').replace(/\s+/g, ' ').slice(0, 80)
+      });
+    }
+  }
+  const metrics = {
+    innerWidth: window.innerWidth,
+    documentScrollWidth: document.documentElement.scrollWidth,
+    bodyScrollWidth: document.body.scrollWidth,
+    visible,
+    offenders: offenders.slice(0, 12)
+  };
+  const pre = document.createElement('pre');
+  pre.id = 'paper-site-audit-desktop-metrics';
+  pre.textContent = JSON.stringify(metrics);
+  document.body.appendChild(pre);
+}, 150);
+</script>
+"""
+    if "<head" in source.lower():
+        source = re.sub(r"(<head[^>]*>)", lambda match: f'{match.group(1)}<base href="{base_href}">', source, count=1, flags=re.I)
+    else:
+        source = f'<base href="{base_href}">' + source
+    if "</body>" in source.lower():
+        source = re.sub(r"</body>", lambda _match: probe + "</body>", source, count=1, flags=re.I)
+    else:
+        source += probe
+
+    with tempfile.TemporaryDirectory() as tmp:
+        probe_path = Path(tmp) / path.name
+        probe_path.write_text(source, encoding="utf-8")
+        try:
+            result = subprocess.run(
+                [
+                    chrome,
+                    "--headless=new",
+                    "--disable-gpu",
+                    "--no-first-run",
+                    "--no-default-browser-check",
+                    "--window-size=1440,950",
+                    "--virtual-time-budget=1000",
+                    "--dump-dom",
+                    probe_path.as_uri(),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=20,
+            )
+        except subprocess.TimeoutExpired:
+            return [], [f"{path}: desktop first-viewport check timed out"]
+    if result.returncode != 0:
+        return [], [f"{path}: desktop first-viewport check failed to run: {result.stderr.strip()[:240]}"]
+
+    match = re.search(r'<pre id="paper-site-audit-desktop-metrics">([\s\S]*?)</pre>', result.stdout)
+    if not match:
+        return [], [f"{path}: desktop first-viewport metrics were not produced"]
+    try:
+        metrics = json.loads(html.unescape(match.group(1)))
+    except Exception as exc:
+        return [], [f"{path}: desktop first-viewport metrics could not be parsed: {exc}"]
+
+    errors: list[str] = []
+    warnings: list[str] = []
+    inner_width = int(metrics.get("innerWidth") or 1440)
+    scroll_width = max(int(metrics.get("documentScrollWidth") or 0), int(metrics.get("bodyScrollWidth") or 0))
+    if scroll_width > inner_width + 2:
+        errors.append(f"{path}: desktop layout has horizontal overflow ({scroll_width}px content in {inner_width}px viewport)")
+    visible = metrics.get("visible") or {}
+    required = {
+        "title": "paper title",
+        "chapterNav": "chapter navigation",
+        "sourceText": "real source paragraph",
+        "chineseReading": "Chinese translation/explanation",
+        "learningAffordance": "inline term, evidence, side note, or learning affordance",
+    }
+    for key, label in required.items():
+        if not visible.get(key):
+            errors.append(f"{path}: desktop first viewport does not show {label}; avoid cover pages that hide the paper reader")
+    if not visible.get("languageMode"):
+        warnings.append(f"{path}: desktop first viewport does not show a language mode control")
+    offenders = metrics.get("offenders") or []
+    if offenders:
+        preview = "; ".join(
+            f"{item.get('tag')}.{str(item.get('className', '')).split()[0] if item.get('className') else ''} right={item.get('right')}"
+            for item in offenders[:4]
+        )
+        errors.append(f"{path}: desktop elements extend outside viewport: {preview}")
     return errors, warnings
 
 
@@ -388,7 +517,13 @@ def cue_missing(text: str, cue_groups: dict[str, list[str]]) -> list[str]:
     return missing
 
 
-def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object] | None) -> tuple[list[str], list[str]]:
+def audit_html(
+    path: Path,
+    root: Path,
+    strict: bool,
+    manifest: dict[str, object] | None,
+    expected_source_blocks: int | None = None,
+) -> tuple[list[str], list[str]]:
     text = path.read_text(encoding="utf-8", errors="replace")
     parser = SiteHTMLParser()
     parser.feed(text)
@@ -417,6 +552,9 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
     source_texts = parser.class_texts.get("source-text", [])
     translation_texts = parser.class_texts.get("translation-text", [])
     plain_texts = parser.class_texts.get("plain-text", [])
+    source_count = max(source_count, len(source_texts))
+    translation_count = max(translation_count, len(translation_texts))
+    plain_count = max(plain_count, len(plain_texts))
     figure_note_texts = []
     for class_name in ("figure-note", "figure-explanation", "figure-reader", "source-figure-note"):
         figure_note_texts.extend(parser.class_texts.get(class_name, []))
@@ -441,6 +579,12 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
     any_large_pre = bool(re.search(r"<pre[\s\S]{2000,}</pre>", text, re.I))
     diagram_svgs = [src for src, _alt, _line in parser.images if re.search(r"assets/diagrams/.*\.svg(\?|#|$)", src, re.I)]
     source_figures = [src for src, _alt, _line in parser.images if re.search(r"assets/(figures|tables)/", src, re.I)]
+    source_screenshot_refs = [
+        src
+        for src, _alt, _line in parser.images
+        if re.search(r"assets/screenshots/|source-facsimile|paper-facsimile|facsimile-plus-html", src, re.I)
+    ]
+    has_facsimile_markup = bool(re.search(r"source-facsimile|paper-facsimile|facsimile-plus-html|排版截图", text, re.I))
 
     if full_source_pre:
         errors.append(f"{path}: full source is buried in a collapsed pre block; render paragraph-level bilingual source in the main flow")
@@ -449,6 +593,8 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
 
     if source_count and translation_count and source_count != translation_count:
         errors.append(f"{path}: source/translation block count mismatch ({source_count} source vs {translation_count} translation)")
+    if expected_source_blocks is not None and source_count < expected_source_blocks:
+        errors.append(f"{path}: expected at least {expected_source_blocks} source reading blocks, found {source_count}")
     if strict and source_count < 10:
         errors.append(f"{path}: too few source reading blocks for a paper learning site ({source_count}); use --expected-source-blocks for exact checks")
     if strict and not language_mode:
@@ -556,12 +702,17 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
             if missing_ladder:
                 errors.append(f"{path}: term explanations should include full explanation ladder; missing labels: {', '.join(missing_ladder)}")
         generic_action_counts: dict[str, int] = {}
+        generic_exact_labels = {"打开图表抽屉", "继续阅读这一章", "查看详情", "展开详情", "了解更多", "阅读更多"}
         for attrs, _line in parser.buttons:
             label = attrs.get("aria-label", "").strip() or attrs.get("title", "").strip() or attrs.get("_text", "").strip()
             if label:
                 generic_action_counts[label] = generic_action_counts.get(label, 0) + 1
+                if re.fullmatch(r"(查看|查看详情|了解更多|展开|展开详情|继续|探索|打开|阅读|更多|详情)", label, re.I):
+                    errors.append(f"{path}: vague button label '{label}' needs a concrete learning object or action")
         for label, count in sorted(generic_action_counts.items()):
-            if count > 3 and label in {"打开图表抽屉", "继续下一章", "查看详情", "展开详情"}:
+            if label in generic_exact_labels:
+                errors.append(f"{path}: generic button label '{label}' appears {count} times; name the figure, table, term, chapter, or learning action")
+            if count > 3 and label in {"打开图表抽屉", "继续下一章", "查看详情", "展开详情", "了解更多", "展开", "打开"}:
                 errors.append(f"{path}: repeated generic button label '{label}' appears {count} times; use figure/table/chapter-specific learning actions")
         long_source_failures = 0
         for index, source_value in enumerate(source_texts):
@@ -599,6 +750,13 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
         generated_visuals = manifest.get("generated_visuals")
         paper_figures_manifest = manifest.get("paper_figures")
         generated_visual_language = str(manifest.get("generated_visual_language", "")).lower()
+        design_brief = manifest.get("design_brief")
+        layout_strategy = manifest.get("layout_strategy")
+        source_rendering_modes = manifest.get("source_rendering_modes")
+        source_screenshot_blocks = manifest.get("source_screenshot_blocks")
+        interaction_inventory = manifest.get("interaction_inventory")
+        if expected_source_blocks is not None and not isinstance(expected_source, int):
+            expected_source = expected_source_blocks
         if isinstance(expected_source, int) and rendered_source < expected_source:
             errors.append(f"{path}: manifest says only {rendered_source}/{expected_source} source paragraphs rendered")
         if isinstance(expected_figures, int) and isinstance(rendered_figures, int) and rendered_figures < expected_figures:
@@ -610,11 +768,107 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
         if strict:
             if manifest.get("public_ui_clean") is False:
                 errors.append(f"{path}: manifest says public_ui_clean=false")
+            if not isinstance(design_brief, dict) or not design_brief:
+                errors.append(f"{path}: manifest needs design_brief with paper-specific visual direction and typography/layout choices")
+            else:
+                required_design_keys = {"visual_direction", "topic_motif", "typography_plan", "why_not_generic"}
+                missing_design_keys = sorted(required_design_keys - set(str(key) for key in design_brief.keys()))
+                if missing_design_keys:
+                    errors.append(f"{path}: design_brief missing keys: {', '.join(missing_design_keys)}")
+                design_text = " ".join(str(value) for value in design_brief.values()).lower()
+                if re.search(r"\bdashboard\b|generic|ai gradient|模板|通用", design_text):
+                    warnings.append(f"{path}: design_brief sounds generic; explain the paper-specific visual system")
+            if not isinstance(layout_strategy, dict) or not layout_strategy.get("summary"):
+                errors.append(f"{path}: manifest needs layout_strategy.summary explaining why this reading layout fits the paper")
+            else:
+                if layout_strategy.get("desktop_first_viewport_checked") is not True:
+                    errors.append(f"{path}: layout_strategy.desktop_first_viewport_checked must be true after browser review")
+                if layout_strategy.get("mobile_layout_checked") is not True:
+                    errors.append(f"{path}: layout_strategy.mobile_layout_checked must be true after responsive review")
+            if not isinstance(source_rendering_modes, list) or not source_rendering_modes:
+                errors.append(f"{path}: manifest needs source_rendering_modes[] such as parallel-bilingual, stacked-bilingual, interleaved-close-reading, figure-led")
+            elif isinstance(expected_source, int) and expected_source >= 20 and len(set(map(str, source_rendering_modes))) == 1:
+                warnings.append(f"{path}: only one source rendering mode recorded for a long paper; confirm the layout is not a one-template reader")
+            if source_screenshot_blocks is None:
+                errors.append(f"{path}: manifest needs source_screenshot_blocks[]; use [] when no original-text facsimile screenshots are rendered")
+            elif not isinstance(source_screenshot_blocks, list):
+                errors.append(f"{path}: source_screenshot_blocks must be a list")
+            if (source_screenshot_refs or has_facsimile_markup) and not source_screenshot_blocks:
+                errors.append(f"{path}: source facsimile/screenshot markup is present but manifest has no source_screenshot_blocks[] entries")
+            if isinstance(source_screenshot_blocks, list):
+                for index, item in enumerate(source_screenshot_blocks, start=1):
+                    if not isinstance(item, dict):
+                        errors.append(f"{path}: source_screenshot_blocks[{index}] must be an object")
+                        continue
+                    required = {"source_id", "path", "reason", "selectable_text_fallback_id"}
+                    missing = sorted(required - set(str(key) for key in item.keys()))
+                    if missing:
+                        errors.append(f"{path}: source_screenshot_blocks[{index}] missing keys: {', '.join(missing)}")
+                    block_path = str(item.get("path", ""))
+                    if block_path:
+                        asset = (root / block_path.split("#", 1)[0].split("?", 1)[0]).resolve()
+                        try:
+                            asset.relative_to(root.resolve())
+                        except ValueError:
+                            errors.append(f"{path}: source_screenshot_blocks[{index}] path points outside site root: {block_path}")
+                        if not asset.exists():
+                            errors.append(f"{path}: source_screenshot_blocks[{index}] missing image asset: {block_path}")
+                        if block_path not in text:
+                            warnings.append(f"{path}: source_screenshot_blocks[{index}] path is not referenced in HTML: {block_path}")
+                    fallback_id = str(item.get("selectable_text_fallback_id", ""))
+                    if fallback_id and fallback_id not in text:
+                        errors.append(f"{path}: source_screenshot_blocks[{index}] fallback id not found in HTML: {fallback_id}")
+            if not isinstance(interaction_inventory, dict) or not interaction_inventory:
+                errors.append(f"{path}: manifest needs interaction_inventory with real learning interactions and tested controls")
+            else:
+                learning_keys = {
+                    "figure_hotspots",
+                    "formula_breakdowns",
+                    "comparison_tables",
+                    "chapter_quizzes",
+                    "knowledge_map",
+                    "method_chats",
+                    "visualizers",
+                    "concept_maps",
+                }
+                has_learning_action = False
+                for key in learning_keys:
+                    value = interaction_inventory.get(key)
+                    if value is True or (isinstance(value, (int, float)) and value > 0) or (isinstance(value, list) and value):
+                        has_learning_action = True
+                if not has_learning_action:
+                    errors.append(f"{path}: interaction_inventory needs at least one non-decorative learning action beyond passive text/terms")
+                tested_controls = interaction_inventory.get("tested_controls")
+                if not isinstance(tested_controls, list) or not tested_controls:
+                    errors.append(f"{path}: interaction_inventory needs tested_controls[] with trigger, state_change, close_method, and linked_source_ids")
+                else:
+                    for index, item in enumerate(tested_controls[:12], start=1):
+                        if not isinstance(item, dict):
+                            errors.append(f"{path}: tested_controls[{index}] must be an object")
+                            continue
+                        missing = [key for key in ("trigger", "state_change", "close_method", "linked_source_ids") if not item.get(key)]
+                        if missing:
+                            errors.append(f"{path}: tested_controls[{index}] missing: {', '.join(missing)}")
             if isinstance(expected_source, int) and expected_source >= 10:
                 if not isinstance(source_blocks, list) or not source_blocks:
                     errors.append(f"{path}: manifest needs source_blocks[] with per-paragraph ids/hashes, not only total source paragraph counts")
                 if not isinstance(chapter_coverage, list) or not chapter_coverage:
                     errors.append(f"{path}: manifest needs chapter_coverage[] with expected/rendered/missing source ids per chapter")
+            if isinstance(source_blocks, list) and isinstance(rendered_source, int) and len(source_blocks) < rendered_source:
+                errors.append(f"{path}: manifest source_blocks length ({len(source_blocks)}) is smaller than rendered source count ({rendered_source})")
+            if isinstance(chapter_coverage, list):
+                for index, chapter in enumerate(chapter_coverage, start=1):
+                    if not isinstance(chapter, dict):
+                        continue
+                    missing_ids = chapter.get("missing_source_ids")
+                    if isinstance(missing_ids, list) and missing_ids:
+                        errors.append(f"{path}: chapter_coverage[{index}] has missing_source_ids: {', '.join(map(str, missing_ids[:5]))}")
+                    expected_ids = chapter.get("expected_source_ids")
+                    rendered_ids = chapter.get("rendered_source_ids")
+                    if isinstance(expected_ids, list) and isinstance(rendered_ids, list):
+                        missing_rendered = sorted(set(map(str, expected_ids)) - set(map(str, rendered_ids)))
+                        if missing_rendered:
+                            errors.append(f"{path}: chapter_coverage[{index}] did not render expected source ids: {', '.join(missing_rendered[:5])}")
             if isinstance(source_blocks, list):
                 missing_render_refs = []
                 for block in source_blocks[:20]:
@@ -641,12 +895,34 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
                     errors.append(f"{path}: generated diagrams should be Chinese-dominant for Chinese-bilingual sites, got '{generated_visual_language}'")
                 if not generated_visual_language:
                     errors.append(f"{path}: manifest must record generated_visual_language for Chinese-bilingual generated diagrams")
+            if isinstance(chapter_coverage, list):
+                non_appendix_chapters = [
+                    chapter
+                    for chapter in chapter_coverage
+                    if isinstance(chapter, dict)
+                    and not re.search(
+                        r"appendix|references|bibliography|supplement|附录|参考文献",
+                        f"{chapter.get('chapter_id', '')} {chapter.get('title', '')}",
+                        re.I,
+                    )
+                ]
+                if isinstance(rendered_visuals, int) and non_appendix_chapters and rendered_visuals < len(non_appendix_chapters):
+                    errors.append(
+                        f"{path}: generated visuals are below the per-chapter teaching expectation ({rendered_visuals} visuals for {len(non_appendix_chapters)} non-appendix chapters)"
+                    )
+                for index, chapter in enumerate(non_appendix_chapters, start=1):
+                    visual_ids = chapter.get("generated_visual_ids")
+                    if visual_ids is not None and not visual_ids:
+                        errors.append(f"{path}: chapter_coverage[{index}] has no generated_visual_ids; each major chapter needs a teaching visual or a justified omission")
             if isinstance(generated_visuals, list):
                 for index, item in enumerate(generated_visuals, start=1):
                     if not isinstance(item, dict):
                         continue
                     if not (item.get("model_name") or item.get("tool") or image_model):
                         errors.append(f"{path}: generated visual #{index} must record model_name/tool")
+                    for key in ("teaches_concept", "reader_question", "why_image_needed"):
+                        if not item.get(key):
+                            errors.append(f"{path}: generated visual #{index} must record {key}")
                     if not item.get("linked_source_ids") and not item.get("linked_claim_ids"):
                         errors.append(f"{path}: generated visual #{index} should link to source paragraphs or claims")
                     language = str(item.get("in_image_text_language", item.get("prompt_language", ""))).lower()
@@ -669,6 +945,15 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
                         continue
                     if not (item.get("primary_rendered_block_id") or item.get("primary_source_id") or item.get("linked_source_ids")):
                         errors.append(f"{path}: paper figure/table #{index} needs a primary in-flow reading position linked to source ids")
+                    primary_block = str(item.get("primary_rendered_block_id", "") or "")
+                    primary_source = str(item.get("primary_source_id", "") or "")
+                    figure_path = str(item.get("path", "") or "")
+                    if primary_block and primary_block not in text:
+                        errors.append(f"{path}: paper figure/table #{index} primary_rendered_block_id not found in HTML: {primary_block}")
+                    if primary_source and primary_source not in text:
+                        errors.append(f"{path}: paper figure/table #{index} primary_source_id not found in HTML: {primary_source}")
+                    if figure_path and figure_path not in text:
+                        warnings.append(f"{path}: paper figure/table #{index} path is not referenced in HTML: {figure_path}")
                     cues = item.get("explanation_cues_present")
                     if isinstance(cues, list):
                         required = {"它是什么", "怎么看", "结论是什么", "不能推出什么"}
@@ -681,6 +966,9 @@ def audit_html(path: Path, root: Path, strict: bool, manifest: dict[str, object]
         errors.append(f"{path}: no learning-site manifest found; add data/learning-site-manifest.json for exact coverage checks")
 
     if strict:
+        render_errors, render_warnings = run_desktop_first_viewport_check(path, root)
+        errors.extend(render_errors)
+        warnings.extend(render_warnings)
         render_errors, render_warnings = run_mobile_render_check(path, root)
         errors.extend(render_errors)
         warnings.extend(render_warnings)
@@ -692,6 +980,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Audit a static paper learning site.")
     parser.add_argument("target", help="Path to site directory or HTML file")
     parser.add_argument("--strict", action="store_true", help="Treat core product-quality gaps as errors")
+    parser.add_argument("--expected-source-blocks", type=int, help="Expected minimum number of source reading blocks in the main reader")
     args = parser.parse_args()
 
     target = Path(args.target).expanduser().resolve()
@@ -709,7 +998,7 @@ def main() -> int:
     all_errors: list[str] = []
     all_warnings: list[str] = []
     for html_file in html_files:
-        errors, warnings = audit_html(html_file, root, args.strict, manifest)
+        errors, warnings = audit_html(html_file, root, args.strict, manifest, args.expected_source_blocks)
         all_errors.extend(errors)
         all_warnings.extend(warnings)
 

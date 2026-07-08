@@ -62,6 +62,43 @@ Create `data/learning-site-manifest.json` for every site:
   "paragraph_anchors_expected": 120,
   "paragraph_anchors_rendered": 120,
   "generated_visual_language": "zh-dominant",
+  "design_brief": {
+    "visual_direction": "lab-notebook reader with crisp evidence panels",
+    "topic_motif": "attention routing and information flow",
+    "typography_plan": "serif-like source text, high-line-height Chinese reading, compact evidence labels",
+    "why_not_generic": "the page uses paper-specific diagrams, evidence cards, and source artifacts instead of a dashboard grid"
+  },
+  "layout_strategy": {
+    "summary": "stacked first-pass reader with figure-led experiment sections",
+    "desktop_first_viewport_checked": true,
+    "mobile_layout_checked": true
+  },
+  "source_rendering_modes": ["parallel-bilingual", "stacked-bilingual", "interleaved-close-reading", "figure-led"],
+  "source_screenshot_blocks": [
+    {
+      "source_id": "sec4-formula-02",
+      "path": "assets/screenshots/sec4-formula-02.png",
+      "reason": "formula layout",
+      "selectable_text_fallback_id": "block-sec4-formula-02"
+    }
+  ],
+  "interaction_inventory": {
+    "inline_terms": 40,
+    "figure_hotspots": 9,
+    "formula_breakdowns": 3,
+    "comparison_tables": 2,
+    "chapter_quizzes": 6,
+    "knowledge_map": true,
+    "tested_controls": [
+      {
+        "control_id": "term-self-attention",
+        "trigger": "inline term button",
+        "state_change": "opens term drawer and sets aria-expanded=true",
+        "close_method": "close button and Escape",
+        "linked_source_ids": ["sec3-p04"]
+      }
+    ]
+  },
   "source_blocks": [
     {
       "source_id": "sec3-p04",
@@ -113,6 +150,9 @@ Create `data/learning-site-manifest.json` for every site:
       "id": "qkv-map",
       "path": "assets/diagrams/qkv-map.png",
       "model_name": "Image 2",
+      "teaches_concept": "Q/K/V roles in attention",
+      "reader_question": "Why does attention need three projections instead of one vector?",
+      "why_image_needed": "The mechanism is spatial and hard to follow from text alone.",
       "prompt_language": "zh",
       "in_image_text_language": "zh-dominant",
       "chinese_label_ratio": 0.85,
@@ -140,11 +180,16 @@ Use manifest fields to make reader-quality promises auditable:
 - `term_strip_only_count`: number of term chips that have no inline anchor; should be 0 unless explicitly justified.
 - `paragraph_anchors_rendered`: number of source paragraphs with stable ids or `data-source-id`.
 - `generated_visual_language`: use values such as `zh-dominant`, `en-dominant`, or `mixed`; Chinese-bilingual sites should usually be `zh-dominant`.
+- `design_brief`: public-facing visual direction chosen for this paper. Include visual direction, motif, typography plan, and why the site is not a generic dashboard/template.
+- `layout_strategy`: what layout system was chosen and whether desktop/mobile checks were run.
+- `source_rendering_modes`: the actual modes used, such as `parallel-bilingual`, `stacked-bilingual`, `interleaved-close-reading`, `figure-led`, or `facsimile-plus-html`.
+- `source_screenshot_blocks`: every original-text screenshot/facsimile block with source id, reason, path, and selectable text fallback id.
+- `interaction_inventory`: count or describe real learning interactions: inline terms, figure hotspots, formula breakdowns, comparison tables, quizzes, knowledge maps, method chats, visualizers. Include tested controls with trigger, state change, close method, and linked source ids. Delete or implement any button that has no real state change.
 - `source_blocks`: per-paragraph evidence that the page can trace rendered text back to the extracted paper.
 - `chapter_coverage`: per-chapter expected/rendered source ids. Do not rely only on total counts.
 - `term_anchors`: inline trigger inventory. `is_inline` should be true for the main learning entry point.
 - `paper_figures`: each source figure/table's primary in-flow location, linked paragraph ids, and explanation cues.
-- `generated_visuals`: model, language, source linkage, and factual-value provenance for each generated teaching image.
+- `generated_visuals`: model, language, source linkage, teaching concept, reader question, why an image was needed, and factual-value provenance for each generated teaching image.
 - `omitted_source_blocks`: every skipped paragraph/table/appendix block, with a reader-facing reason.
 
 ## Static reader standards
@@ -153,6 +198,8 @@ Use manifest fields to make reader-quality promises auditable:
 - A source PDF link can exist as secondary reference.
 - Text should be selectable and searchable.
 - Main paper text should be paragraph-level bilingual/Chinese reading blocks, not raw `<pre>` dumps.
+- Source/translation layout should be chosen per section. Use side-by-side only when it improves readability; stacked or interleaved layouts are often better for dense paragraphs and mobile.
+- Source prose screenshots are allowed only as facsimile aids paired with selectable source text, Chinese reading, and explanation.
 - Non-Chinese sources should include visible language controls such as `中英 / 中文 / EN only`.
 - Figure/table screenshots should be local assets with alt text.
 - Generated diagrams should be local bitmap assets from Image 2 or the available image-generation tool, with nearby HTML explanations. Manual SVG diagrams are acceptable only as fallback after telling the user.
@@ -160,6 +207,8 @@ Use manifest fields to make reader-quality promises auditable:
 - Image `alt`, `title`, and `aria-label` are public UI too. Use learner-facing descriptions such as `Q/K/V 概念图` or `Figure 1 架构解读`, not `Generated explainer diagram`.
 - Visible buttons should describe the learning action: `读 Figure 1 架构图`, `放大 Table 2 结果表`, `解释 BLEU`, not repeated generic labels like `打开图表抽屉`.
 - Every reading block should carry a stable `data-source-id` and contain source, translation/Chinese reading, and plain-language explanation in the main flow.
+- At least one real learning action should appear in each chapter when useful: inspect evidence, explain a term, break down a formula, compare a baseline, answer a quiz, or open a concept map.
+- Language mode must actually switch reading layers: `中英` shows original and Chinese reading, `中文` hides or de-emphasizes original text while preserving a return-to-original affordance, and `EN only` shows source text while keeping term/figure anchors usable. The active paragraph and side panel must not lose sync after switching.
 - Use `Learn <paper short title>` as title and deployment name.
 
 ## Vercel

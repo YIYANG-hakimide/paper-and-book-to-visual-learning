@@ -13,6 +13,7 @@ The first viewport should usually include:
 - synchronized side note, marginalia, or learning panel
 - an inline term trigger or figure/table evidence entry close to the first reading block
 - paper-specific visual assets or generated illustrations
+- a visible reading-layout choice that fits the section, not a one-size-fits-all grid
 - no visible internal workflow or audience-targeting copy
 
 ## Fail states
@@ -30,6 +31,11 @@ Reject and redesign if the page looks like any of these:
 - interaction hints that are visually ambiguous, such as a lone underlined term outside the paragraph with no nearby explanation of what clicking does
 - public image alt/title/aria text that says "Generated explainer", "prompt", "asset", or other production wording
 - a public "generated image asset" gallery that is not part of the learning path
+- identical card rhythm for every section even when the content switches from prose to math, architecture, or experiments
+- screenshot-only source prose with no selectable text fallback
+- a first screen that is only a hero/cover and makes the reader scroll before seeing real paper text
+- a design brief that says only "clean", "modern", "Apple-like", "anime", or "dashboard" without concrete typography, spacing, reading density, and paper-specific motifs
+- controls that look clickable but do not change state, do not close, or reopen the same summary everywhere
 
 ## Reader Product Bar
 
@@ -43,6 +49,7 @@ Aim beyond a static web page:
 - short "what to look for" prompts before hard sections and "what you should now know" after them
 - reader actions that feel learnable: define term, inspect evidence, compare baseline, show limitation, jump to next claim
 - review affordances after each chapter: checkpoint, concept recap, and "next section asks..." bridge
+- varied but coherent section rhythms: close-reading blocks for dense prose, figure-led layouts for evidence, formula cards for math, and visual modules for abstract mechanisms
 
 ## Product references to borrow from
 
@@ -52,6 +59,8 @@ Use the principle, not the visual skin:
 - Hypothesis-style anchored annotation: comments attach directly to the source sentence.
 - Distill/Observable-style interaction: details-on-demand, small interactive explanations, and visual outputs live beside the prose.
 - Science in the Classroom-style annotation: novice explanations overlay the original article instead of replacing it.
+- Get It.-style document anchoring: concept tags should open visualizers, quizzes, or knowledge-map nodes without replacing the source document.
+- Paper-to-course-style learning modules: formula breakdowns, timelines, method chats, comparison tables, ablation diagrams, and quizzes are useful when tied to exact paper content.
 
 ## Visual direction
 
@@ -61,8 +70,16 @@ Before coding, choose a visual direction and write it down:
 - visual metaphor or motif
 - typography scale
 - color palette
+- spacing rhythm and panel density
+- source-text line width and bilingual text hierarchy
+- semantic colors for terms, evidence, limitations, and definitions
 - icon/illustration style
+- component shapes and where cards are allowed
+- desktop and mobile layout behavior
+- first-viewport priority: what must be visible and what can be one click away
 - how figures and generated diagrams will sit in the reading flow
+- which source rendering modes will be used: parallel, stacked, interleaved, figure-led, facsimile-plus-HTML
+- which interactive learning modules will be used and why
 
 For academic learning sites, prefer restrained but distinctive design. Use texture, illustration, chapter landmarks, and clear typography; avoid decorative noise.
 
@@ -75,5 +92,14 @@ Take a desktop screenshot before final delivery. A reviewer should be able to te
 - where to start reading
 - how to switch chapters
 - where explanations and terms will appear
+- that the page is not merely a summary cover before the actual reading begins
 
 If not, iterate on layout before polishing content.
+
+## Visual Review Rounds
+
+Run at least these design reviews before final delivery:
+
+1. **Layout rhythm**: sections should not all use the same card pattern. Check that methods, formulas, figures, experiments, and review cards have forms suited to their content.
+2. **Reading typography**: CJK/Latin text should have comfortable line height, stable width, `lang` attributes where feasible, and no overlong lines.
+3. **Interaction clarity**: every clickable term, figure, visualizer, quiz, or chapter control should look clickable and explain what will happen.

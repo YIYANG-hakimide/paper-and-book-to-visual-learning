@@ -19,16 +19,20 @@ Default reader level: a college student with no professional background in the p
 - For Chinese source material, keep the original Chinese and add "说人话" explanations. For other languages, provide original text, Chinese translation, and Chinese explanations.
 - Non-Chinese papers need a visible language mode control such as `中英 / 中文 / EN only` unless the user explicitly rejects it.
 - Use chapter-switching or section-switching reading by default, not one undifferentiated long page.
+- Choose source/translation layout per section: side-by-side, stacked, interleaved close reading, figure-led, or facsimile-plus-HTML. Do not force one layout everywhere.
+- Use cropped source screenshots only for layout-sensitive formulas, tables, figures, or page context, and always pair screenshots with selectable source text, Chinese reading, and explanation.
 - Keep terms, figures, tables, and side notes attached to the paragraphs they explain.
 - Put term triggers inline on the exact source or translated words they explain. Do not place terms only in a detached "related terms" tag strip.
 - Explain hard terms before using them: term definition, plain-language analogy, meaning in this paper, how the author uses it, and common misunderstanding.
 - Every figure/table from the paper must appear near the relevant argument unless it is truly redundant. Explain how to read it, what comparison it supports, what conclusion follows, and what it does not prove.
 - Use Image 2 or the available image generation model generously as a teaching tool: at least one generated explainer image per chapter and one per major hard concept when useful.
+- Each generated teaching image must solve a local reading problem: record the concept taught, reader question, linked source ids, and why an image is needed. Do not use generated images as decorative galleries.
 - For Chinese or Chinese-bilingual learning sites, generated diagrams should use Chinese-dominant labels and callouts. Keep canonical English terms only when useful, preferably paired with Chinese.
 - Do not substitute hand-drawn SVG boxes for Image 2 visuals when the user asked for Image 2 or when an image-generation tool is available. Record generated visual provenance in a manifest.
 - Avoid generic "AI dashboard" styling. Choose a visual language tied to the paper, audience, and source artifacts.
 - Do not expose internal production notes to readers: no "面向无专业背景大学生", "reader level", "preflight", "manifest", "regression slice", "generated assets", or similar build/test wording in the public UI.
 - Before delivery, run a three-pass adversarial review for UI/UX, teaching clarity, bilingual/source coverage, and figure/table explanation coverage.
+- Before delivery, create and validate an interaction inventory: trigger, state change, close method, keyboard or return path, and linked source ids for chapter switching, language mode, term popovers, figure/table panels, quizzes, and visualizers.
 
 ## Mandatory Intake
 
@@ -53,6 +57,7 @@ Read these reference files as needed:
 - Always read `references/pedagogy-rules.md` before writing explanations.
 - Always read `references/novice-reader-research.md` before designing the learning path or review criteria.
 - Always read `references/reader-interactions.md` before designing or coding the reader.
+- Always read `references/layout-and-visual-patterns.md` before deciding page layout, reading modes, interaction modules, or visual style.
 - Always read `references/design-quality-gate.md` before implementing visual design.
 - Read `references/figure-table-explanation.md` when the source contains figures, tables, charts, equations, experiments, or data.
 - Read `references/image2-diagram-guidance.md` before generating or prompting diagrams.
@@ -73,6 +78,8 @@ Use `scripts/preflight_learning_site.py` before implementation. Use `scripts/aud
    - Convert paper sections into a map or chapter navigation.
    - For each chapter, write a short "why this chapter matters" note, a logic summary, and 3-5 learning checkpoints.
    - Decide where each term, generated diagram, source figure/table, and side note belongs in the reading flow.
+   - Choose a reading layout mode for each chapter/section: parallel, stacked, interleaved, figure-led, or facsimile-plus-HTML.
+   - Write a design brief that turns visual direction into UI decisions: typography scale, source text width, color semantics, spacing rhythm, component shapes, mobile behavior, and first-viewport priority.
    - Design from novice reader behavior: preserve the original, scaffold how to read it, teach prerequisite concepts at the moment of need, then ask the reader to inspect evidence before accepting a conclusion.
    - Sketch the first viewport before coding: title, language mode, chapter map, bilingual reading block, and synchronized side note must all be visible or one click away.
 
@@ -86,8 +93,11 @@ Use `scripts/preflight_learning_site.py` before implementation. Use `scripts/aud
 
 4. **Create visuals**
    - Use source screenshots for original figures/tables, but never screenshot blocks of text that should be selectable HTML text.
+   - If preserving original text layout is important, use a cropped facsimile screenshot beside selectable source text. Screenshot-only prose is not acceptable.
    - For every source figure/table, place it next to the argument it supports and explain it individually. Do not rely on one global "figure drawer" explanation for multiple charts.
    - Use Image 2 diagrams for conceptual understanding: workflows, metaphors, system maps, experiment setup, training loops, comparison summaries, and "what the author is doing next" transitions.
+   - Add learning interactions where useful: formula breakdowns, lineage timelines, method chats, comparison tables, ablation diagrams, concept maps, quizzes, or Feynman-style chapter checks.
+   - For every generated visual, record `teaches_concept`, `reader_question`, `why_image_needed`, source links, language style, and factual-value provenance in the manifest.
    - If Image 2 is unavailable, stop and tell the user before substituting SVG/manual diagrams. Do not silently downgrade.
    - Generated images may include short labels and a few concise explanatory callouts when that improves comprehension; keep long definitions, bilingual paragraphs, and precise evidence explanations in HTML.
    - For Chinese-bilingual readers, prompt generated images with Chinese labels/callouts first, plus short English term aliases only when needed.
@@ -95,7 +105,10 @@ Use `scripts/preflight_learning_site.py` before implementation. Use `scripts/aud
 5. **Build the site**
    - Prefer a static HTML/CSS/JS package unless the user asks for a framework or the project already has one.
    - Use a chapter-switching reader with a left learning panel and right bilingual source reader when appropriate.
+   - Do not assume the reading pane must be left/right. Use stacked or interleaved layouts when they read better, and make mobile a first-class layout.
    - Provide expandable and closable bubbles, drawers, cards, or panels for terms, notes, figures, and logic summaries.
+   - Make language mode real: `中英` shows original and Chinese reading, `中文` hides or de-emphasizes original text with a return-to-original affordance, and `EN only` preserves source text and anchors. Keep active paragraph, side notes, and drawers synchronized.
+   - Remove or implement empty interactions. Buttons with no state change, repeated generic drawers, `href="#"` dead links, quiz cards without feedback, or controls that reopen the same summary are not acceptable.
    - Use reader-facing UI labels only. Replace production labels such as "generated asset" with learning labels such as "机制图解", "证据读法", or "概念地图".
    - Set the page title and deployment name to `Learn <paper short title>` or the best concise paper-specific name.
 
@@ -103,6 +116,7 @@ Use `scripts/preflight_learning_site.py` before implementation. Use `scripts/aud
    - Run the site locally or open the HTML directly, depending on the build.
    - Use browser screenshots across desktop and mobile when possible; check that no text overlaps and all popovers/drawers can close.
    - Run `scripts/audit_learning_site.py <site-dir-or-html> --strict`.
+   - Use `--expected-source-blocks <count>` when the extraction inventory knows the expected number of main reading blocks.
    - Perform at least three review passes: design/interaction, teaching comprehension, and bilingual/source/figure coverage. For each pass, record concrete fixes made or concrete reasons no fix was needed.
    - Fix issues before final delivery.
 

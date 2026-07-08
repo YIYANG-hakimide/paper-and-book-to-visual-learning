@@ -4,7 +4,7 @@
 >
 > 把论文和难读长文变成可阅读、可交互、可部署的双语学习网站。
 
-[![Version](https://img.shields.io/badge/version-v0.1.1-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site/releases/tag/v0.1.1)
+[![Version](https://img.shields.io/badge/version-v0.1.2-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site/releases/tag/v0.1.2)
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827)](./SKILL.md)
 [![Static Site](https://img.shields.io/badge/output-static%20HTML-16a34a)](#what-it-builds--它会生成什么)
 
@@ -20,6 +20,8 @@
 - 图表和实验结果放在对应论证位置，而不是堆在页面最后。
 - 每个难点尽量配 Image 2 生成的解释图、流程图、示意图或类比图。
 - 每个正文阅读块都尽量有可追溯的段落锚点，方便术语、旁注、图表和原文互相回跳。
+- 原文与中文解释的排版不固定死板：可以左右对照、上下堆叠、逐句精读、图表先行，也可以在公式/表格处使用“原文截图 + 可选文字”的组合。
+- 截图只能辅助保留公式、表格、多栏排版或原论文视觉上下文，不能替代可复制、可搜索、可解释的正文文字。
 - 默认面向“没有专业背景的大学生”，从基础概念讲起。
 
 ## 它适合什么场景
@@ -47,9 +49,11 @@ learn-paper-title/
 
 - 章节地图或章节切换阅读器
 - 原文 / 中文翻译 / 说人话解释
+- 按章节内容选择的阅读排版：左右对照、上下对照、逐句精读、图表先行、排版截图加可选文字
 - 跟随正文出现的术语弹窗
 - 跟随段落变化的旁注或学习面板
 - 图表抽屉、图表热点或左右对照解读
+- 公式拆解、方法时间线、概念地图、对比表、章节小测、Feynman 式自我解释卡
 - 每章逻辑总结、学习检查点和下一章衔接
 - 桌面与移动端可读的响应式布局
 
@@ -69,7 +73,13 @@ learn-paper-title/
 4. **必须有视觉化辅助**
    每章至少一张解释图；重要难点尽量用 Image 2 生成流程图、系统图、类比图或报告式图解。
 
-5. **必须做可用性检查**
+5. **必须按内容选择排版**
+   摘要、方法、公式、实验、相关工作不应该都长得一样。左右双栏不是唯一答案；密集段落可以上下对照，公式可以逐句拆，实验可以先看图表再读结论。
+
+6. **截图不能替代正文**
+   可以截原论文里的公式、表格、多面板图或排版敏感片段，但必须配可选文字、中文翻译/解释、段落锚点和截图理由。
+
+7. **必须做可用性检查**
    交互要能打开和关闭，文字不能遮挡，图表不能断链，英文长段不能只有很短中文解释。
 
 ## 安装
@@ -141,11 +151,14 @@ python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <s
 - 是否缺少中英 / 中文 / EN only 这类语言模式
 - 是否用 SVG 小框图替代 Image 2 生成图
 - 是否缺少 `data/learning-site-manifest.json`
+- 是否缺少 `layout_strategy`、`source_rendering_modes`、`source_screenshot_blocks`、`interaction_inventory` 等可审计证据
+- 是否用原文截图替代可选文字
 - 是否把“面向无专业背景大学生”“Generated”“生成教学图资产”“preflight”“manifest”等制作过程文案暴露给读者
 - 术语是否只出现在段后标签，而没有嵌在原文/译文/解释的具体词位上
 - 阅读块是否缺少稳定 `data-source-id`
 - 图表按钮是否都是“打开图表抽屉”这类无法理解的重复泛称
 - 生成图是否记录中文主导、Image 2/图像模型来源和对应段落
+- 每章是否有真实学习动作，例如拆公式、读图表、对比 baseline、测一下本章、看概念图
 
 这个脚本不是完整 QA，但会把“看起来内容很多、实际不帮助阅读”的常见坏味道提前拦下来。
 
@@ -165,8 +178,8 @@ git push
 发布新版本时，可以打 tag：
 
 ```bash
-git tag v0.1.1
-git push origin main v0.1.1
+git tag v0.1.2
+git push origin main v0.1.2
 ```
 
 ---
@@ -202,9 +215,11 @@ The reader experience usually includes:
 
 - chapter map or section-switching reader
 - original text, Chinese translation, and plain-language explanation
+- section-appropriate source layouts: parallel, stacked, interleaved close reading, figure-led, or facsimile-plus-selectable-text
 - inline term popovers
 - synchronized side notes or learning panel
 - figure drawers, figure hotspots, or side-by-side figure interpretation
+- formula breakdowns, method timelines, concept maps, comparison tables, quizzes, and Feynman-style review cards
 - chapter logic summaries, learning checkpoints, and next-chapter bridges
 - responsive layout for desktop and mobile
 
@@ -224,7 +239,13 @@ The skill pushes for these standards:
 4. **Visual teaching aids are expected**
    Use Image 2 or another available image-generation model for flowcharts, system maps, metaphors, report-style diagrams, and experiment explainers.
 
-5. **The site must be usable**
+5. **Layout should follow the content**
+   Abstracts, methods, formulas, experiments, and related work should not all use the same card rhythm. Side-by-side bilingual columns are only one option; dense prose may read better stacked, formulas may need close reading, and result sections may need figure-first layouts.
+
+6. **Screenshots must not replace text**
+   Cropped original-paper screenshots are useful for formulas, tables, multi-panel figures, or layout context, but they must be paired with selectable source text, Chinese reading/explanation, anchors, and a reason.
+
+7. **The site must be usable**
    Interactions need open/close states, text must not overlap, images must load, and long English passages need proportional Chinese explanation.
 
 ## Installation
@@ -275,10 +296,10 @@ Run:
 python3 ~/.codex/skills/paper-to-learning-site/scripts/audit_learning_site.py <site-dir-or-index.html> --strict
 ```
 
-The scripts check tool availability, missing local image assets, duplicate IDs, weak image alt text, PDF iframe patterns, buried raw source text, missing language modes, SVG-only generated diagrams, and missing coverage manifests. Strict mode also flags public production copy such as `Generated`, `prompt`, `preflight`, or `manifest`, detached-only term chips, missing `data-source-id` anchors, repeated vague action labels, and generated visuals that lack language/source provenance.
+The scripts check tool availability, missing local image assets, duplicate IDs, weak image alt text, PDF iframe patterns, buried raw source text, missing language modes, SVG-only generated diagrams, and missing coverage manifests. Strict mode also flags missing layout strategy, missing source-rendering modes, screenshot-only source prose, weak interaction inventories, public production copy such as `Generated`, `prompt`, `preflight`, or `manifest`, detached-only term chips, missing `data-source-id` anchors, repeated vague action labels, and generated visuals that lack language/source provenance.
 
 ## Status
 
-Current release: `v0.1.1`.
+Current release: `v0.1.2`.
 
-This is an early but usable version focused on the workflow and quality standards. Future versions may add stronger templates, extraction utilities, sample sites, and richer validation.
+This is an early but usable version focused on the workflow and quality standards. Version `v0.1.2` strengthens layout strategy, original-text rendering, screenshot fallback rules, interaction inventories, and visual-reading quality gates. Future versions may add stronger templates, extraction utilities, sample sites, and richer validation.
