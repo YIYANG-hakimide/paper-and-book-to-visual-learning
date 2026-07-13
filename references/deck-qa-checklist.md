@@ -2,6 +2,10 @@
 
 ## Story And Teaching
 
+- [ ] A complete `data/storyboard.json` was locked before final teaching-image generation.
+- [ ] The storyboard has a visible problem -> prerequisites -> method -> evidence -> limitations/reconstruction arc.
+- [ ] Every slide belongs to an act/chapter and has a necessary transition from the previous slide.
+- [ ] Every final generated image was planned for an existing storyboard slide before generation.
 - [ ] The deck opens with the paper's real problem, not production framing.
 - [ ] The outline follows learner questions and causal logic.
 - [ ] Prerequisites appear before technical use.
@@ -10,6 +14,7 @@
 - [ ] Each slide has one clear learner question and one dominant teaching object.
 - [ ] Dense ideas are split instead of compressed into tiny text.
 - [ ] Recaps ask the learner to reconstruct the logic in their own words.
+- [ ] A full-deck contact sheet reads as one coherent lesson rather than unrelated posters.
 
 ## Visuals
 
@@ -21,6 +26,7 @@
 - [ ] No important generated image is decorative only.
 - [ ] No visual is cropped, blurry, too small, or overloaded.
 - [ ] Source evidence and generated explanation are visually distinguishable.
+- [ ] `assets/visuals/` contains no unused or orphan generated images.
 - [ ] Every text-bearing generated visual has OCR results compared with the expected labels.
 - [ ] Every generated visual records `display_width_px`, `display_height_px`, `crop_checked`, `reviewer_status`, and regeneration reason when it failed.
 - [ ] Primary visuals occupy a substantial slide area; dense evidence is at least 1100px wide on stage or has a dedicated split/zoom slide.
@@ -47,6 +53,7 @@
 - [ ] Public slides contain no prompt, manifest, QA, reader-level, asset, or internal-review language.
 - [ ] The first slide and first content slide feel paper-specific, not templated.
 - [ ] Slide `layout_family` distribution was checked; one repeated composition does not dominate without a paper-specific reason.
+- [ ] Storyboard order, manifest slide order, HTML order, PNG export order, and PDF order match.
 
 ## Export
 

@@ -40,6 +40,8 @@ Default length is 18-36 slides. Split dense ideas into more slides instead of sh
 - Run tool and source preflight before extraction or image generation.
 - Extract and inventory the whole main paper before outlining. Do not build from only the abstract or selected snippets.
 - Organize the deck by learner questions and causal logic, not mechanically by the paper table of contents.
+- Lock a complete storyboard before generating final teaching images. The only images allowed before storyboard lock are the three style previews.
+- Treat images as owned slide components, never as a standalone gallery. Every final visual must have one owning slide, a learner question, previous/next logic, and linked source evidence before generation.
 - Use one main teaching question per slide. A slide may contain supporting detail, but must have one obvious cognitive job.
 - Make explanatory visuals the main feature. Most teaching slides should contain a substantial generated visual, source figure/table, formula breakdown, or carefully composed evidence graphic.
 - Generate at least one teaching visual per major concept and at least one per paper chapter/logic unit when an image materially helps. Prefer several focused visuals over one overloaded poster.
@@ -114,6 +116,8 @@ Create a paper logic map before writing slides:
 8. Evidence, comparisons, and limitations.
 9. A final learner reconstruction of the whole paper.
 
+Convert the logic map into `data/storyboard.json` before generating final teaching images. The storyboard must define acts/chapters, complete slide order, transitions, evidence placement, and image ownership. Mark `storyboard_locked_before_final_generation=true` only after checking the whole teaching arc.
+
 For every planned slide, record:
 
 - `learner_question`
@@ -124,8 +128,14 @@ For every planned slide, record:
 - `evidence_or_illustration`
 - `misconception_to_prevent`
 - `next_slide_bridge`
+- `act_id`
+- `chapter_id`
+- `layout_family`
+- `owned_visual_id` or `owned_evidence_id`
 
 Do not create a slide merely because a paper section exists. Create it because the learner needs a question answered.
+
+Do not start bulk image generation from a list of concepts alone. A concept image without an owning slide and a position in the teaching arc is an orphan asset and must not be generated.
 
 ### 3. Choose Explanation Granularity
 
@@ -159,6 +169,16 @@ Do not sacrifice clarity for period styling. A historical deck may use an archiv
 
 ### 5. Generate Teaching Images
 
+Generate only from the locked storyboard. Work in chapter-sized batches of roughly 3-6 slides:
+
+1. Generate the batch's owned visuals.
+2. Compose those slides immediately in the HTML deck.
+3. Render a batch contact sheet.
+4. Check narrative continuity, image scale, repeated composition, and evidence placement.
+5. Fix the batch before generating the next one.
+
+Do not generate all images first and postpone slide composition until the end.
+
 For each visual:
 
 1. State the local learner question and why prose alone is insufficient.
@@ -174,6 +194,7 @@ Do not make every image a flowchart. Vary the visual grammar according to the id
 ### 6. Compose The Deck
 
 - Use a fixed 1920x1080 stage and scale it uniformly; do not reflow slide content on phones.
+- Give every slide a stable `data-slide-id` matching its storyboard and manifest id.
 - Prefer a single self-contained HTML file with local assets and no build requirement.
 - Use real deck navigation and accessible keyboard controls.
 - Use generated visuals as large primary objects, not tiny thumbnails beside long text.
@@ -182,6 +203,9 @@ Do not make every image a flowchart. Vary the visual grammar according to the id
 - Add “查看原文依据” to important claims. It may open a non-obscuring evidence panel or jump to an appendix/evidence slide.
 - Keep original-language quotations short on main slides. Put longer bilingual source passages in evidence slides or the optional full reader.
 - Preserve a clear progress rhythm: question -> visual explanation -> source evidence -> conclusion -> bridge.
+- Make acts and chapters perceptible through section openings, progress context, and transitions, while avoiding empty agenda pages.
+- Ensure the full deck reads as one continuous lesson when viewed as a contact sheet. Reject a sequence that feels like unrelated posters even when individual pages look attractive.
+- Remove every unused generated image from the final package or record it under rejected attempts outside public assets. `assets/visuals/` must not contain orphan images.
 
 ### 7. Validate And Deliver
 

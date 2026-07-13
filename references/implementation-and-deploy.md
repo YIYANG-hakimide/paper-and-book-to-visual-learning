@@ -14,6 +14,7 @@ learn-paper-title/
     exports/       # optional slide PNGs and PDF
   data/
     source-inventory.json
+    storyboard.json
     learning-deck-manifest.json
   qa/
     screenshots/
@@ -47,6 +48,8 @@ Represent every slide with structured fields:
 - next-slide bridge
 - public-copy-reviewed status
 
+Before final image generation, store the complete ordered slide data in `data/storyboard.json`. The manifest must record the storyboard path, hash, lock status, act coverage, and exact slide-id order.
+
 Recommended slide types:
 
 - title
@@ -77,6 +80,14 @@ Create `data/learning-deck-manifest.json` with at least:
   "deck_language": "zh-bilingual",
   "slides_expected": 24,
   "slides_rendered": 24,
+  "storyboard": {
+    "path": "data/storyboard.json",
+    "sha256": "sha256:...",
+    "locked_before_final_generation": true,
+    "slide_id_order": ["slide-01", "slide-02"],
+    "acts_expected": 5,
+    "acts_rendered": 5
+  },
   "generated_visuals_expected": 13,
   "generated_visuals_rendered": 13,
   "image_generation_route": {
@@ -101,10 +112,13 @@ Create `data/learning-deck-manifest.json` with at least:
       "id": "slide-08",
       "order": 8,
       "type": "method-step",
+      "act_id": "act-3-method",
+      "chapter_id": "chapter-low-rank-update",
       "learner_question": "虚拟人每天如何决定下一步？",
       "one_sentence_answer": "记忆、当前目标和环境共同形成下一步行动。",
       "source_ids": ["sec3-p14", "sec3-p15"],
       "visual_id": "agent-action-loop",
+      "layout_family": "image-led-process",
       "misconception_to_prevent": "角色不是预先写死整天脚本",
       "next_slide_bridge": "有了单个角色，还要解释多个角色如何共享世界。"
     }
@@ -134,12 +148,16 @@ Create `data/learning-deck-manifest.json` with at least:
     "small_viewport_checked": true,
     "public_copy_clean": true,
     "visual_inspection_complete": true,
+    "full_deck_contact_sheet_checked": true,
+    "orphan_generated_visuals": 0,
     "adversarial_passes": ["design", "novice-learning", "evidence"]
   }
 }
 ```
 
 Counts must describe real rendered assets. Never lower expected image counts because generation failed.
+
+The `slides[]` order, storyboard order, and HTML slide order must match exactly. Every generated visual must be referenced by exactly one owning slide. Preview and rejected images belong outside the final `assets/visuals/` ownership count.
 
 ## Image Integration
 

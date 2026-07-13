@@ -4,6 +4,30 @@
 
 Treat the deliverable as a visual lesson, not slides pasted from the paper and not a decorative summary. The learner should be able to read the deck alone without a presenter.
 
+## Storyboard Gate
+
+After source inventory and style previews, write the entire storyboard before generating final visuals. Save it as `data/storyboard.json` and lock it only after the narrative arc passes review.
+
+The storyboard must contain:
+
+- `acts[]`: the major teaching movements
+- `chapters[]`: coherent learner goals inside each act
+- `slides[]`: every final slide in order
+- per-slide question, answer, source ids, visual/evidence owner, misconception, transition, and layout family
+- `narrative_checks`: prerequisite order, evidence-before-conclusion, training/inference/evaluation separation, and final reconstruction
+
+The normal act structure is:
+
+1. **进入问题**: what matters and why the existing situation is insufficient.
+2. **补齐认知**: prerequisites and analogies needed for the method.
+3. **拆开方法**: overview, components, causal sequence, and worked example.
+4. **检查证据**: setup, baseline, metric, source figures/tables, and supported conclusions.
+5. **形成判断**: limitations, boundaries, implications, and learner reconstruction.
+
+Adapt act names and count to the paper, but preserve the learning functions. A deck that jumps from attractive concept images to result charts without these bridges fails.
+
+Only the three style previews may precede storyboard lock. Every later image must reference an existing storyboard slide id.
+
 ## Recommended Arc
 
 Use the paper's actual logic, but usually cover these learner questions:
@@ -35,6 +59,7 @@ Each slide must have:
 - one dominant teaching object
 - one source or evidence link when the slide makes a factual paper claim
 - one bridge that makes the next slide feel necessary
+- one owning act/chapter and one role in the overall arc
 
 Dominant teaching objects may be generated illustrations, source figures, tables, formula breakdowns, timelines, annotated screenshots, short quotations, or worked examples.
 
@@ -91,6 +116,18 @@ Use this order for claims:
 6. State the limitation.
 
 Never use an Image 2 illustration as step 3. It may appear before step 1 to explain the setup or after step 6 to consolidate understanding.
+
+## Batch Assembly
+
+Produce the deck in small narrative batches, not as an image dump:
+
+1. Generate 3-6 storyboard-owned visuals.
+2. Place them into their final slides with HTML explanation and citations.
+3. Render a contact sheet for the batch plus the preceding transition slide.
+4. Check whether the questions, visual language, and evidence form a coherent sequence.
+5. Repair continuity before proceeding.
+
+At the end, render a full-deck contact sheet. A reviewer should be able to infer the story from titles and dominant visual objects alone. If the sequence looks like unrelated posters, revise the storyboard or transitions.
 
 ## Recap
 

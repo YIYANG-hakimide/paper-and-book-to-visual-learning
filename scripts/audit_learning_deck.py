@@ -179,7 +179,13 @@ def main() -> int:
     else:
         html = html_path.read_text(encoding="utf-8", errors="replace")
 
-    slides = re.findall(r'<(?:section|article)[^>]+(?:class=["\'][^"\']*\bslide\b|data-slide(?:=|\s))', html, re.I)
+    slide_tags = re.findall(r'<(?:section|article)[^>]+(?:class=["\'][^"\']*\bslide\b|data-slide(?:=|\s))[^>]*>', html, re.I)
+    slides = slide_tags
+    html_slide_ids = []
+    for tag in slide_tags:
+        match = re.search(r'data-slide-id=["\']([^"\']+)["\']', tag, re.I)
+        if match:
+            html_slide_ids.append(match.group(1))
     if len(slides) < 8:
         errors.append(f"Too few detectable slides for a teaching deck: {len(slides)}")
 
@@ -217,12 +223,49 @@ def main() -> int:
         expected_slides = manifest.get("slides_expected")
         rendered_slides = manifest.get("slides_rendered")
         slide_items = manifest.get("slides", [])
+        manifest_slide_ids = [str(item.get("id")) for item in slide_items if item.get("id")]
         if isinstance(expected_slides, int) and isinstance(rendered_slides, int) and rendered_slides < expected_slides:
             errors.append(f"Manifest reports missing slides: {rendered_slides}/{expected_slides}")
         if isinstance(expected_slides, int) and len(slide_items) != expected_slides:
             errors.append(f"Manifest slide inventory does not match expected count: {len(slide_items)}/{expected_slides}")
         if rendered_slides != len(slides):
             errors.append(f"Rendered slide count does not match detectable HTML slides: manifest={rendered_slides}, html={len(slides)}")
+        if len(html_slide_ids) != len(slides):
+            errors.append("Every HTML slide must have a stable data-slide-id.")
+        elif html_slide_ids != manifest_slide_ids:
+            errors.append("HTML data-slide-id order does not match manifest slide order.")
+
+        storyboard_meta = manifest.get("storyboard", {})
+        storyboard_rel = storyboard_meta.get("path")
+        storyboard = {}
+        if not storyboard_rel:
+            errors.append("Manifest is missing storyboard.path.")
+        else:
+            storyboard_path = root / str(storyboard_rel)
+            if not storyboard_path.exists():
+                errors.append(f"Storyboard file does not exist: {storyboard_rel}")
+            else:
+                try:
+                    storyboard = json.loads(storyboard_path.read_text(encoding="utf-8"))
+                    declared_storyboard_hash = normalized_hash(storyboard_meta.get("sha256"))
+                    if not declared_storyboard_hash or declared_storyboard_hash != sha256(storyboard_path):
+                        errors.append("Storyboard hash is missing or does not match the storyboard file.")
+                except Exception:
+                    errors.append(f"Storyboard is invalid JSON: {storyboard_rel}")
+        if storyboard_meta.get("locked_before_final_generation") is not True:
+            errors.append("Storyboard was not locked before final teaching-image generation.")
+        storyboard_slides = storyboard.get("slides", []) if isinstance(storyboard, dict) else []
+        storyboard_slide_ids = [str(item.get("id")) for item in storyboard_slides if item.get("id")]
+        declared_storyboard_order = [str(item) for item in storyboard_meta.get("slide_id_order", [])]
+        if storyboard_slide_ids != manifest_slide_ids or declared_storyboard_order != manifest_slide_ids:
+            errors.append("Storyboard, manifest, and declared slide-id order do not match exactly.")
+        acts = storyboard.get("acts", []) if isinstance(storyboard, dict) else []
+        if len(acts) < 3:
+            errors.append("Storyboard has too few teaching acts to establish a coherent learning arc.")
+        required_arc_roles = {"problem", "prerequisite", "method", "evidence", "limitation"}
+        arc_roles = {str(item.get("learning_role")) for item in acts if item.get("learning_role")}
+        if not required_arc_roles.issubset(arc_roles):
+            errors.append("Storyboard does not cover the complete problem/prerequisite/method/evidence/limitation arc.")
 
         layout_counts: dict[str, int] = {}
         content_slide_count = 0
@@ -252,9 +295,22 @@ def main() -> int:
             errors.append("generated_visuals_expected=0 bypasses the visual-first deck contract.")
 
         seen_hashes: dict[str, str] = {}
+        visual_ownership: dict[str, list[str]] = {}
+        for slide in slide_items:
+            visual_id = slide.get("owned_visual_id") or slide.get("visual_id")
+            if visual_id:
+                visual_ownership.setdefault(str(visual_id), []).append(str(slide.get("id")))
         for item in visuals:
             rel = item.get("path", "")
             model = str(item.get("model_name", "")).strip()
+            visual_id = str(item.get("id", ""))
+            if not visual_id:
+                errors.append(f"Generated visual is missing id: {rel or '[no path]'}")
+            owners = visual_ownership.get(visual_id, [])
+            if len(owners) != 1:
+                errors.append(f"Generated visual must have exactly one owning slide: {visual_id or rel} owners={owners}")
+            elif item.get("slide_id") != owners[0]:
+                errors.append(f"Generated visual slide_id does not match its owning slide: {visual_id or rel}")
             if not rel:
                 errors.append("Generated visual is missing a path.")
                 continue
@@ -382,14 +438,31 @@ def main() -> int:
                 errors.append(f"Design brief is missing {field}.")
 
         qa = manifest.get("qa", {})
-        for field in ("fixed_stage_checked", "all_slides_rendered", "small_viewport_checked", "visual_inspection_complete"):
+        for field in ("fixed_stage_checked", "all_slides_rendered", "small_viewport_checked", "visual_inspection_complete", "full_deck_contact_sheet_checked"):
             if qa.get(field) is not True:
                 errors.append(f"Deck QA has not passed {field}.")
+        if qa.get("orphan_generated_visuals") != 0:
+            errors.append("Deck QA reports orphan generated visuals.")
         if len(qa.get("adversarial_passes", [])) < 3:
             errors.append("Deck QA does not record all three adversarial review passes.")
 
     if len(local_bitmap_refs) < 4:
         warnings.append(f"Only {len(local_bitmap_refs)} local bitmap images are embedded; visual-first coverage may be weak.")
+
+    visual_root = root / "assets" / "visuals"
+    if visual_root.exists() and manifest and not manifest.get("_invalid"):
+        declared_paths = {str(item.get("path")) for item in manifest.get("generated_visuals", []) if item.get("path")}
+        packaged_paths = {
+            str(path.relative_to(root))
+            for path in visual_root.rglob("*")
+            if path.is_file()
+            and path.suffix.lower() in BITMAP_SUFFIXES
+            and "previews" not in path.parts
+            and "rejected" not in path.parts
+        }
+        orphan_paths = sorted(packaged_paths - declared_paths)
+        if orphan_paths:
+            errors.append(f"assets/visuals contains orphan bitmaps not owned by manifest slides: {orphan_paths[:8]}")
 
     if args.skip_browser:
         warnings.append("Browser rendering was skipped; slide screenshots and runtime geometry were not verified.")
