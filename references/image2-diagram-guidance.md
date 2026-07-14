@@ -43,10 +43,10 @@ For generated visuals, specify:
 - visual form: flowchart, scene, metaphor, consulting diagram, etc.
 - style tied to paper topic, era, objects, and emotional tone, not generic AI aesthetics or one fixed house style
 - for Chinese-bilingual sites, use Chinese as the dominant in-image language; include English only as short aliases for canonical terms when helpful
-- allow short in-image labels and 1-3 concise explanatory callouts when they make the diagram easier to read
+- plan 3-7 short Chinese-dominant labels and concise explanatory callouts for any mechanism, overview, comparison, architecture, or multi-actor teaching visual
 - avoid long paragraphs, dense bilingual text, citations, or exact table values baked into the image
 - avoid factual scores, rankings, percentages, or improvement claims inside the image unless those values are sourced and also explained in nearby HTML
-- leave clean areas for HTML labels or expanded explanations when needed
+- explicitly reserve clean label/callout zones when exact Chinese text will be composed deterministically
 - use the selected aspect ratio: normally 3:4 portrait for image series and 16:9 for PPT; target at least 1536px on the long edge and validate labels at actual final size
 - if the concept needs many labels, create several simpler images rather than one crowded image
 - produce bitmap assets (`.png`, `.jpg`, or `.webp`) unless the image tool returns another real generated-image format
@@ -83,7 +83,15 @@ In every mode, clarify:
 
 Do not rely on an image alone for factual explanation.
 
-Small amounts of text inside generated images are useful for orientation. The rule is "brief and visual", not "text-free": use short stage names, arrows, labels, or callout phrases inside the bitmap, then put the full teaching explanation in selectable HTML.
+Small amounts of text inside generated images are required when the visual contains a process, multiple actors, multiple panels, or a causal chain. The rule is "brief and visual", not "text-free": use short stage names, arrows, labels, and callout phrases inside the teaching composition, then put longer explanation in selectable HTML or surrounding slide copy.
+
+Plan explanatory text before generation. Preferred routes:
+
+1. Ask the image model to generate the composition with short Chinese labels when it can render them reliably.
+2. Otherwise ask it to create named, visually integrated callout zones and anchors, then compose exact Chinese labels at the final bitmap resolution.
+3. For source figures, annotate the real crop rather than asking the model to redraw evidence.
+
+Do not generate an unlabeled beautiful scene and try to rescue it with one sentence below the image. The final teaching image must expose its own reading order and element meanings.
 
 Borrow Guizang-style discipline for educational diagrams when appropriate: one central relationship, 3-5 short Chinese labels, quiet background, strong safe margins, and no dense legend inside the bitmap. If labels are wrong, tiny, or garbled, regenerate instead of accepting the asset.
 
@@ -107,6 +115,8 @@ Record generated visuals in the selected manifest:
 - prompt summary
 - prompt language
 - in-image text language
+- diagram labels and visual semantic map
+- scan order and text-integration method
 - linked source ids or claim ids
 - factual values used and their source refs, if any
 

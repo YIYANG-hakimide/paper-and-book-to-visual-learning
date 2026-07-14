@@ -2,7 +2,7 @@
 
 > 把难读论文变成看得懂、讲得清、具有设计感的学习内容。
 
-[![Version](https://img.shields.io/badge/version-v0.3.0-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site)
+[![Version](https://img.shields.io/badge/version-v0.4.0-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site)
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827)](./SKILL.md)
 [![Outputs](https://img.shields.io/badge/output-Images%20%7C%20PDF%20%7C%20HTML-16a34a)](#三种输出)
 
@@ -10,7 +10,7 @@
 
 ## 三种输出
 
-- **图片**：一组有顺序、高信息量、适合阅读和分享的讲解信息图。
+- **图片**：一组有顺序、高信息量的讲解信息图，并附可直接翻阅的画册 PDF。
 - **PPT**：具有完整演示逻辑和视觉节奏的 16:9 PDF 演示稿。
 - **HTML**：可交互、可中英对照、可部署到 Vercel 的论文学习网页。
 
@@ -25,6 +25,8 @@
 - 逐张解释论文图表：怎么看、相比谁、结论是什么、有什么限制。
 - 保留论文原文与证据来源，生成图不会冒充实验依据。
 - 先组织完整讲解逻辑，再生成图片或页面，避免内容堆砌。
+- 开头先给论文总览和论证地图，再补背景、拆方法、读实验和结论。
+- 教学图在生成前规划中文标签、阅读顺序和图中含义，避免只有漂亮画面没有解释。
 
 ## 安装
 
@@ -48,4 +50,4 @@ skill 会询问希望生成图片、PPT（PDF）还是 HTML，以及希望采用
 
 ## English
 
-`paper-to-learning-site` turns academic papers and difficult long-form content into one of three designed learning formats: an ordered explainer-image series, a presentation-style PDF deck, or an interactive bilingual HTML learning site. It is designed for college-level readers without deep domain expertise and keeps explanations linked to the paper's real evidence.
+`paper-to-learning-site` turns academic papers and difficult long-form content into one of three designed learning formats: an ordered explainer-image series with an album PDF, a presentation-style PDF deck, or an interactive bilingual HTML learning site. It is designed for college-level readers without deep domain expertise and keeps explanations linked to the paper's real evidence.

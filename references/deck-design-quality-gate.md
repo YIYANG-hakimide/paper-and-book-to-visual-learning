@@ -6,17 +6,20 @@ The result must feel like a deliberately art-directed visual lesson, not an AI d
 
 It must also feel presentable. Every page needs a clear focal point, readable speaking order, and enough breathing room to work on a projected screen. A correct but report-like PDF fails PPT mode.
 
-## First Two Slides
+## First Three Slides
 
-Within the title slide and first content slide, a reviewer should understand:
+Within the title slide and first two content slides, a reviewer should understand:
 
 - which paper this is
 - the real problem or learner question
 - the paper-specific visual motif
 - the deck's reading density and visual language
 - that the first content slide already teaches something
+- the paper's complete argument route from question to evidence to conclusion
 
 Reject generic agenda slides, audience descriptions, production framing, and template names.
+
+Require a paper overview by slide 2 and an argument map by slide 3. A list of chapter names or three contribution cards is not an argument map unless it shows how the parts connect and why the evidence supports the conclusion.
 
 ## Preview Difference
 
@@ -46,11 +49,15 @@ Use multiple coherent composition families:
 
 Record `layout_family` on each slide. No single content layout family should occupy more than about 60% of teaching slides unless the design brief explains why the paper genuinely requires it. Avoid consecutive repetition of the same left-text/right-image composition.
 
+Do not repeat one main composition for more than three consecutive teaching slides. Across a medium or detailed deck, use at least four materially different composition families.
+
 ## Presentation Rhythm
 
 Deliberately alternate opening question or tension, visual explanation, concrete example, source evidence, conclusion, and transition. Use section beats to reset attention without adding empty agenda pages.
 
 Read each page aloud during review. If a presenter must read a paragraph verbatim, split or rewrite it. If a page has no obvious first thing to look at, redesign it. Include some low-density, high-impact pages; reserve dense composition for evidence where density is justified.
+
+Low density must be intentional. Require a recorded reason and cap low-density pages at roughly one quarter of teaching pages. A sentence with a few unlabeled boxes is not a high-impact page.
 
 ## Size And Legibility
 
@@ -60,6 +67,8 @@ Read each page aloud during review. If a presenter must read a paragraph verbati
 - At a 1366x768 browser viewport, key HTML text and in-image labels must remain comfortably readable. Treat labels whose rendered height is below roughly 16px as a failure.
 - Do not place a complex diagram in a thumbnail beside a long paragraph.
 - If a figure cannot meet these constraints, split it or use image-above/explanation-below across multiple slides.
+- Meaningful teaching content should normally occupy roughly 55%-80% of the stage. Large empty regions are acceptable only when they create a deliberate tension, transition, or conclusion beat.
+- A source crop used as evidence should normally occupy at least 40% of the stage or receive its own zoom page with 2-4 annotations.
 
 ## Evidence Styling
 

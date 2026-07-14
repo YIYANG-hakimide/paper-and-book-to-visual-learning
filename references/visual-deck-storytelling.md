@@ -37,6 +37,17 @@ The normal act structure is:
 
 Adapt act names and count to the paper, but preserve the learning functions. A deck that jumps from attractive concept images to result charts without these bridges fails.
 
+## Mandatory Opening Pages
+
+Do not make the learner infer the paper's structure from a sequence of detail pages.
+
+1. Cover/thesis: what question the paper asks and its answer in one sentence.
+2. Paper overview: problem, contribution, method/evidence route, and final takeaway on one page.
+3. Argument map: the causal or argumentative chain showing how the paper moves from premise to evidence to conclusion.
+4. Prerequisite map when needed: the smallest set of background concepts required for the next section.
+
+For concise outputs, pages 2 and 3 may be combined. For medium/detailed outputs, keep overview and argument map visually distinct. A generic agenda does not satisfy either role.
+
 Only lightweight style previews may precede storyboard lock. Generate one when direction is clear and three only when alternatives are requested or genuinely needed. Every later image must reference an existing storyboard item id.
 
 ## Recommended Arc
@@ -71,6 +82,7 @@ Each slide must have:
 - one source or evidence link when the slide makes a factual paper claim
 - one bridge that makes the next slide feel necessary
 - one owning act/chapter and one role in the overall arc
+- 2-4 visible information groups, a recorded scan order, and a standalone reader takeaway
 
 Dominant teaching objects may be generated illustrations, source figures, tables, formula breakdowns, timelines, annotated screenshots, short quotations, or worked examples.
 
@@ -83,6 +95,8 @@ Default to reading-first density:
 - body: no more than 80-140 Chinese characters unless the slide is explicitly an evidence or source-reading slide
 - labels: 2-7 Chinese characters each
 - citations and footnotes: short, exact, and visibly secondary
+
+Do not confuse breathing room with emptiness. A page with a sentence plus a few unlabeled boxes is under-taught even when it is technically legible. Use `visual-page-teaching-contract.md` to record and review teaching units.
 
 If more explanation is needed, split the page. Never solve density by shrinking typography below comfortable reading size.
 

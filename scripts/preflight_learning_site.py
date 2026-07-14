@@ -256,7 +256,8 @@ def main() -> int:
     pdfplumber_ok, pdfplumber_python = python_module("pdfplumber")
     pypdf_ok, pypdf_python = python_module("pypdf")
     pillow_ok, pillow_python = python_module("PIL")
-    recommended_python = pdfplumber_python or pypdf_python or pillow_python or sys.executable
+    reportlab_ok, reportlab_python = python_module("reportlab")
+    recommended_python = pdfplumber_python or pypdf_python or pillow_python or reportlab_python or sys.executable
 
     browser_required = args.mode in {"presentation-pdf", "interactive-html"}
     browser_status = playwright_browser_status() if browser_required else status(True, "not required for image-series mode")
@@ -272,9 +273,12 @@ def main() -> int:
         "pdftoppm": status(bool(command_path("pdftoppm")), command_path("pdftoppm")),
         "sips": status(bool(command_path("sips")), command_path("sips")),
         "imagemagick": status(bool(command_path("magick", "convert")), command_path("magick", "convert")),
+        "swift": status(bool(command_path("swift")), command_path("swift")),
+        "tesseract": status(bool(command_path("tesseract")), command_path("tesseract")),
         "python_pdfplumber": status(pdfplumber_ok, pdfplumber_python),
         "python_pypdf": status(pypdf_ok, pypdf_python),
         "python_pillow": status(pillow_ok, pillow_python),
+        "python_reportlab": status(reportlab_ok, reportlab_python),
         "node_playwright": status(node_can_import("playwright")),
         "playwright_browser": browser_status,
         "chrome_headless": status(bool(chrome_path()), chrome_path()),
@@ -287,6 +291,8 @@ def main() -> int:
         "pdf_text": checks["pdftotext"]["ok"] or checks["python_pdfplumber"]["ok"] or checks["python_pypdf"]["ok"],
         "pdf_figures": checks["pdftoppm"]["ok"] or checks["python_pillow"]["ok"],
         "image_processing": checks["python_pillow"]["ok"] or checks["sips"]["ok"] or checks["imagemagick"]["ok"],
+        "actual_ocr": checks["tesseract"]["ok"] or (sys.platform == "darwin" and checks["swift"]["ok"]),
+        "album_pdf_export": (checks["python_reportlab"]["ok"] or checks["python_pillow"]["ok"]) if args.mode == "image-series" else "not-required",
         "image_generation": "manual_check_required",
         "visual_deck_layout": checks["frontend_slides_skill"]["ok"] or "built-in fixed-stage fallback",
         "illustration_prompting": checks["guizang_material_skill"]["ok"] or "built-in paper-specific prompting",
@@ -306,6 +312,10 @@ def main() -> int:
         blockers.append("No PDF figure rendering route found: install/use pdftoppm or another reliable renderer.")
     if browser_required and not routes["browser_qa"]:
         blockers.append("No browser QA route found: install Playwright or use system Chrome.")
+    if args.mode in {"image-series", "presentation-pdf"} and not routes["actual_ocr"]:
+        blockers.append("No executable OCR route found for final visual verification: install Tesseract or use macOS Swift/Vision.")
+    if args.mode == "image-series" and not routes["album_pdf_export"]:
+        blockers.append("No album PDF export route found: install reportlab or Pillow.")
     if args.mode == "presentation-pdf" and not routes["deck_export"]:
         blockers.append("No browser route found for presentation PDF export.")
     if args.deploy and args.mode == "interactive-html" and not routes["vercel_deploy"]:

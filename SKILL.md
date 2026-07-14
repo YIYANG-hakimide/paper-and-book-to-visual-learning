@@ -41,7 +41,7 @@ Create a logically ordered visual album, not slide screenshots and not a folder 
 - Use varied forms according to content: scene, process, timeline, comparison, architecture, annotated evidence, data-first graphic, concept map, scientific illustration, or consulting-style page.
 - Put concise explanation, key labels, and source/page cues directly into the composition when readable.
 - Keep exact numbers, quotations, equations, and evidence faithful; use carefully composed source crops or deterministic overlays when generation could distort them.
-- Deliver the numbered PNG/JPEG/WebP sequence, contact sheet, storyboard, manifest, and QA report. Do not build HTML or PDF unless requested.
+- Deliver the numbered PNG/JPEG/WebP sequence plus a page-matched album PDF, contact sheet, storyboard, manifest, and QA report. Do not build HTML unless requested.
 
 ### PPT / Presentation PDF
 
@@ -82,16 +82,19 @@ Do not hit a target count by adding filler. Do not compress required logic into 
 - Extract and inventory the complete main paper before selecting content.
 - Organize by learner questions and causal logic, not mechanically by the paper table of contents.
 - Lock `data/storyboard.json` before final image generation or page implementation. Only lightweight style previews may precede storyboard lock.
+- Put an explicit paper overview by item 2 and an argument map by item 3; do not begin detailed exposition before the learner understands what the paper claims and how it supports that claim.
 - Every final image/page must have an owning storyboard item, source ids, teaching purpose, and previous/next bridge.
 - Preserve the arc: problem -> prerequisites -> method -> evidence -> conclusion -> limitation -> learner reconstruction.
 - Explain hard terms in this order: field definition, plain analogy, meaning in this paper, author usage, common misunderstanding.
 - Separate data/world construction, training, inference/simulation, and evaluation whenever relevant.
 - Show experimental setup, baseline, and metric before the result conclusion.
+- For multi-stage methods, follow at least one concrete input through the full pipeline so the learner sees what each stage changes.
 - Generated visuals explain; source text, source figures/tables, formulas, and experiments prove.
 - Every important result names baseline, metric/dimension, direction/value, evidence, and limitation.
 - Choose visual style from the paper's topic, era, objects, source artifacts, and emotional tone. Do not force one house style.
 - For Chinese readers, use Chinese-dominant labels and keep long, precise copy outside unreliable generated text when necessary.
 - A chat preview does not count. Final generated images must be local PNG/JPEG/WebP assets.
+- A beautiful unlabeled scene does not count as a teaching diagram. Plan Chinese-dominant labels, callouts, scan order, and visual-to-concept mapping before generation, then compose them at native output resolution.
 - Never expose prompts, QA notes, reader targeting, manifest language, or internal reasoning in the public output.
 
 ## Required References
@@ -104,6 +107,7 @@ Always read before planning:
 - `references/teaching-coverage-contract.md`
 - `references/output-modes-and-sizing.md`
 - `references/visual-deck-storytelling.md`
+- `references/visual-page-teaching-contract.md`
 - `references/performance-and-caching.md`
 
 Read before visual generation:
@@ -134,6 +138,7 @@ Read by selected mode:
 1. Apply the selected output and size mode.
 2. Build the teaching arc and complete ordered storyboard.
 3. Record per item: learner question, one-sentence answer, source ids, teaching role, visual/evidence owner, misconception, layout family, and next bridge.
+   - For image/PPT items also record `sequence_role`, `information_groups`, `scan_order`, `reader_takeaway`, and `teaching_units`.
    - For PPT also record `presentation_beat`, `spoken_takeaway`, `density_class`, `section_reset`, `reveal_order`, and `estimated_seconds`.
    - For factual image/PPT items record a reader-visible source cue, not only hidden source ids.
 4. Validate coverage and remove filler before locking the storyboard.
@@ -155,8 +160,8 @@ Read by selected mode:
 
 ### 5. Validate By Mode
 
-- Images: run `scripts/audit_visual_series.py <output-dir> --strict`; inspect every final image and the full contact sheet.
-- PPT: build and inspect the deck, export PDF, then run the canonical final command `scripts/audit_learning_deck.py <work-dir-or-index.html> --strict --require-pdf`.
+- Images: export the page-matched album PDF, run `scripts/audit_visual_series.py <output-dir> --source <paper.pdf> --strict --require-pdf`; inspect every final image, the full contact sheet, and the PDF.
+- PPT: build and inspect the deck, export PDF, then run the canonical final command `scripts/audit_learning_deck.py <work-dir-or-index.html> --source <paper.pdf> --strict --require-pdf`.
 - HTML: run `scripts/audit_learning_site.py <site-dir-or-index.html> --strict`; test desktop/mobile interactions and source coverage.
 - For every mode, run design, novice-learning, and evidence-fidelity reviews. Record concrete fixes in `qa/qa-report.json`.
 
@@ -176,7 +181,7 @@ Read by selected mode:
 
 State clearly what was selected and return only the relevant primary artifact:
 
-- Images: numbered image folder/contact sheet and count.
+- Images: numbered image folder, album PDF, contact sheet, and count.
 - PPT: final PDF and page count.
 - HTML: local `index.html` and deployed URL when requested.
 

@@ -4,7 +4,7 @@
 
 Ask for one primary output:
 
-- `image-series`: high-information ordered explainer images for reading, sharing, or album-style consumption
+- `image-series`: high-information ordered explainer images plus a page-matched album PDF for reading, sharing, or album-style consumption
 - `presentation-pdf`: 16:9 presentation pages exported as PDF
 - `interactive-html`: interactive bilingual/Chinese source reader and deployable website
 
@@ -42,6 +42,7 @@ Use judgment. A short but mathematically difficult paper may need medium detail;
 - Detailed: 21-30 images, rarely above 36
 - Each image can combine a question, structured explanation, visual mechanism, and short evidence cue.
 - Use an ordered album rhythm: cover/problem, prerequisites, method, evidence, limitations, recap.
+- Reserve the opening for overview and argument mapping: in concise mode combine them if needed; in medium/detailed mode give them separate pages.
 
 ### Presentation PDF
 

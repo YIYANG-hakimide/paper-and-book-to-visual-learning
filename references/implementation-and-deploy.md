@@ -10,9 +10,12 @@ Do not automatically generate all formats.
 learn-paper-images/
   assets/images/           # numbered final images only
   assets/evidence/         # source crops used in compositions
+  assets/exports/
+    learn-paper-album.pdf  # one final image per page, same order
   data/source-inventory.json
   data/storyboard.json
   data/learning-series-manifest.json
+  qa/ocr/                 # actual OCR output, one text artifact per final image
   qa/contact-sheet.jpg
   qa/qa-report.json
 ```
@@ -32,6 +35,7 @@ learn-paper-presentation/
   data/source-inventory.json
   data/storyboard.json
   data/learning-deck-manifest.json
+  qa/ocr/                 # OCR output for generated text-bearing visuals
   qa/screenshots/
   qa/contact-sheet.jpg
   qa/qa-report.json
@@ -61,15 +65,19 @@ Before final generation, create and lock `data/storyboard.json`. Record output m
 
 Manifest counts must match real artifacts. Store source inventory path/hash, storyboard path/hash, image provider/model, design brief, claim/evidence map, generated asset hashes/dimensions, and concrete QA results.
 
-Use `manifest_schema_version: "0.3"` for all three mode-specific manifests.
+Always pass the original source path to the final audit. The audit must compare the requested file hash and PDF page count with `source_fidelity.source_pdf_sha256` and `source_fidelity.page_count`. A package built from another paper is a P0 failure even when its internal manifest is self-consistent.
+
+Use `manifest_schema_version: "0.4"` for image-series and presentation manifests. Keep HTML manifests at `0.3` until their reader contract changes.
 
 ## Image-Series Composition
 
 - Use the selected aspect ratio, normally 3:4 portrait.
 - Compose exact Chinese copy, citations, values, equations, and labels deterministically when model-generated text is unreliable.
+- Plan labels and callout zones before generation; compose deterministic text at the final bitmap resolution so it remains sharp and visually integrated.
 - Preserve a shared design system across the sequence while varying visual form.
 - Create a contact sheet after each batch and one final contact sheet.
-- Run `audit_visual_series.py --strict` before delivery.
+- Export the album PDF and run `audit_visual_series.py <output-dir> --source <paper.pdf> --strict --require-pdf` before delivery.
+- Use `scripts/build_image_album_pdf.py assets/images assets/exports/learn-paper-album.pdf` for the standard one-image-per-page export.
 
 ## Presentation Stage
 
@@ -78,7 +86,7 @@ Use `manifest_schema_version: "0.3"` for all three mode-specific manifests.
 - Use the internal HTML stage to ensure exact typography, citations, formulas, charts, and image placement.
 - Use large focal visuals and presentation pacing rather than image-series density.
 - Export pages with Playwright or another reliable browser renderer.
-- Run `audit_learning_deck.py --strict`, export PDF, then rerun with `--strict --require-pdf`.
+- Run `audit_learning_deck.py <work-dir> --source <paper.pdf> --strict`, export PDF, then rerun with `--source <paper.pdf> --strict --require-pdf`.
 - Inspect title, image-led, evidence-led, densest, and closing pages in the final PDF.
 
 ## Interactive HTML
