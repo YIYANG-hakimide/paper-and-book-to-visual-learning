@@ -2,9 +2,9 @@
 
 ## Use images as teaching tools
 
-Use Image 2 or the best available real image-generation model to create visuals that reduce cognitive load. Generated teaching images are the complete final pages in image-series mode, a major visual layer in PPT mode, and an in-context teaching aid in HTML mode.
+Use Image 2 or the best available real image-generation model to create visuals that reduce cognitive load. Generated teaching images are the complete final pages in image-series mode, a mandatory and major visual layer in every non-trivial PPT, and an in-context teaching aid in HTML mode.
 
-Do not silently replace generated teaching images with hand-written SVG diagrams. If Image 2 is unavailable, follow `image-model-routing.md` and use another configured image model that returns local raster assets. In image-series mode, stop and ask the user to connect another image model or choose another output mode when no capable route exists. Manual fallback is only available for PPT/HTML after explicit approval.
+Do not silently replace generated teaching images with hand-written SVG diagrams. If Image 2 appears unavailable, first perform the real smoke test required by `image-model-routing.md`, then use another configured image model that returns local raster assets. In image-series mode, stop and ask the user to connect another image model or choose another output mode when no capable route exists. Manual fallback is only available for PPT/HTML after a real failed call and explicit approval.
 
 Do not treat an Image 2 chat preview as a delivered asset. A generated teaching image counts only after a real bitmap file is available inside the selected output package and referenced by its mode-specific manifest. PPT/HTML images must also be embedded in the rendered page; image-series assets are themselves the final pages.
 
@@ -15,6 +15,7 @@ Coverage follows the selected output, size mode, and storyboard:
 - detailed mode normally gives each major hard concept its own visual or focused micro-sequence
 - add visuals for hard terms, method pipelines, world-building, data construction, training loops, experiment setup/comparison, causal/evidence chains, and result interpretation when they materially reduce cognitive load
 - most image-series items and PPT teaching pages should contain a substantial visual object; use source evidence, formulas, deterministic charts, or worked examples where generation is the wrong tool
+- every non-trivial PPT must embed at least one real generated bitmap, and every storyboard object routed to `generated` or `image-to-image` must be generated rather than redrawn with simple shapes
 
 ## Diagram types
 
@@ -41,7 +42,7 @@ For generated visuals, specify:
 - target learner: non-specialist college student
 - learning purpose: the one thing the image must clarify
 - visual form: flowchart, scene, metaphor, consulting diagram, etc.
-- style tied to paper topic, era, objects, and emotional tone, not generic AI aesthetics or one fixed house style
+- style tied to source topic, genre, era, objects, and emotional tone, not generic AI aesthetics or one fixed house style
 - for Chinese-bilingual sites, use Chinese as the dominant in-image language; include English only as short aliases for canonical terms when helpful
 - plan a clear Chinese title, native Chinese explanation, short labels, arrows, and callouts for any mechanism, overview, comparison, architecture, or multi-actor teaching visual
 - use enough text to make the image self-explanatory, but split the image when the text becomes crowded or too small
@@ -78,7 +79,7 @@ In every mode, clarify:
 
 - what problem the image helps explain
 - how to read it
-- how it maps to the paper
+- how it maps to the source
 - what simplification it makes
 
 In image-series mode the image must stand alone, while internal source records still verify factual claims. In PPT/HTML, surrounding exact text and source evidence remain visible.
@@ -134,6 +135,6 @@ For each generated teaching image:
 
 If any generated image exists only as an in-chat preview, the deck/site is blocked. Record the blocker in QA if useful, but do not call the artifact complete and do not change expected counts to hide the gap.
 
-If a PPT/HTML asset was manually drawn SVG after explicit approval, mark it as `manual-svg-fallback` and do not count it as an Image 2 generated visual. Image-series mode never accepts this fallback.
+If a PPT/HTML asset was manually drawn SVG after a real failed model call and explicit approval, mark it as `manual-svg-fallback` and do not count it as an Image 2 generated visual. Image-series mode never accepts this fallback.
 
 For positive tests and final delivery, actually call the selected real image-generation route. Do not create a placeholder PNG, screenshot an SVG, or write a model name in the manifest without a real generated bitmap copied into the correct mode-specific asset directory and placed at the concept it teaches.

@@ -2,7 +2,7 @@
 
 ## Product Model
 
-Treat the deliverable as a visual lesson, not slides pasted from the paper and not a decorative summary. The learner should be able to read the deck alone without a presenter.
+Treat the deliverable as a presentation report: designed for explaining the source to other people, while remaining readable after the talk. It is neither source pages pasted into slides nor a decorative summary.
 
 ## Storyboard Gate
 
@@ -18,7 +18,7 @@ The storyboard must contain:
 
 For PPT, every page also records:
 
-- `presentation_intent`: `reading-first`
+- `presentation_intent`: `present-and-read`
 - `communication_job`: what the reader should understand, believe, or be able to judge after this page
 - `reasoning_role`: question, definition, mechanism, example, evidence, comparison, conclusion, boundary, or synthesis
 - `standalone_takeaway`: the conclusion a reader should retain
@@ -27,6 +27,9 @@ For PPT, every page also records:
 - `density_class`: low, medium, or evidence-dense
 - `section_reset`: whether this page visibly opens a new chapter
 - `scan_order`: the intended reading order
+- `text_character_count`: public slide text excluding citations and text already legible inside evidence objects
+- `information_group_count`: the number of distinct, visible teaching groups
+- `visual_route`: `generated`, `image-to-image`, `deterministic`, `source-crop`, or a justified combination
 
 Avoid more than three consecutive evidence-dense pages without a reset, synthesis, or example.
 
@@ -38,7 +41,7 @@ The normal act structure is:
 4. **检查证据**: setup, baseline, metric, source figures/tables, and supported conclusions.
 5. **形成判断**: limitations, boundaries, implications, and learner reconstruction.
 
-Adapt act names and count to the paper, but preserve the learning functions. A deck that jumps from attractive concept images to result charts without these bridges fails.
+Adapt act names and count to the source. Books/articles may use idea progression, chapter turns, examples, tensions, and synthesis; manuals may use procedure and failure-mode arcs. Never invent experimental or methodological beats solely to fit the paper template. A deck that jumps from attractive concept images to evidence without reasoning bridges fails.
 
 ## Mandatory Opening Pages
 
@@ -84,27 +87,40 @@ Each slide must have:
 - one learner question as the title or clear framing
 - a clear answer or judgment
 - one dominant teaching object
-- one source or evidence link when the slide makes a factual paper claim
+- one source or evidence link when the slide makes a factual source claim
 - one bridge that makes the next slide feel necessary
 - one owning act/chapter and one role in the overall arc
-- 2-4 visible information groups, a recorded scan order, and a standalone reader takeaway
+- normally 3-7 visible information groups, a recorded scan order, and a standalone reader takeaway
 - enough definition, explanation, evidence, and implication to work without a presenter
 
 Dominant teaching objects may be generated illustrations, source figures, tables, formula breakdowns, timelines, annotated screenshots, short quotations, or worked examples.
 
 ## Density
 
-Default to reading-first density. Use page role rather than one universal word limit:
+Default to consulting/research-report density. Character ranges are diagnostics, not quotas; count public slide text but exclude citations and text already legible inside charts/tables:
 
-- overview/argument map: normally 250-450 Chinese characters across structured groups
-- concept/mechanism page: normally 180-350 characters plus a substantial visual
-- evidence/figure page: normally 250-600 characters plus a large readable source object
-- conclusion/boundary page: normally 120-300 characters
+- overview/argument map: normally 400-700 Chinese characters across structured groups
+- concept/mechanism page: normally 350-650 characters plus a substantial visual
+- evidence/figure/comparison page: normally 450-900 characters plus a large readable source object
+- conclusion/boundary/synthesis page: normally 250-500 characters unless it is a deliberately sparse closing beat
 - citations and footnotes: short, exact, and visibly secondary
 
-Do not confuse breathing room with emptiness. A page with a sentence plus a few unlabeled boxes is under-taught even when it is technically legible. Use `visual-page-teaching-contract.md` to record and review teaching units.
+Density is structural: conclusion + explanation chain + evidence/example + implication + boundary. Do not confuse breathing room with emptiness. A page with a sentence plus a few unlabeled boxes is under-taught even when it is technically legible. Equally, copied paragraphs in tiny type are not structured density. Use `visual-page-teaching-contract.md` to record and review teaching units.
 
-If more explanation is needed, split the page. Never solve density by shrinking typography below comfortable reading size.
+Split only when the page contains more than one major message or cannot remain legible. Never create extra sparse pages merely to keep every slide minimal, and never solve density by shrinking typography below comfortable reading size.
+
+## Page-Level Visual Routing
+
+Route every substantial visual object before asset production:
+
+- `generated`: concept metaphor, mechanism, architecture, scene, abstract process, or worked example best taught by a capable image model
+- `image-to-image`: a source/reference-guided explanatory reinterpretation when the original object needs simplification or consistent art direction; never present it as original evidence
+- `deterministic`: exact chart, table, formula, quantitative diagram, timeline, or schematic whose labels/values must remain precise
+- `source-crop`: original figure, experiment result, quotation, screenshot, or table that functions as evidence
+
+Use combinations freely. There is no unified visual format: the page's teaching and evidence jobs decide the route.
+
+Every non-trivial deck must contain at least one embedded bitmap from a real Image 2 / `gpt-image-2` or other capable image-model call, and every storyboard item marked `generated` or `image-to-image` must be fulfilled. Before declaring generation unavailable, perform a real smoke-test call and inspect whether it returns a persistent local asset. Simple SVG, generic cards, and primitive shapes do not satisfy a planned generated visual. Manual fallback requires a failed real call plus explicit user approval.
 
 ## Granularity Tests
 

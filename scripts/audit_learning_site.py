@@ -1916,7 +1916,7 @@ def audit_html(
         section_map = manifest.get("section_map")
         chapter_landmarks = manifest.get("chapter_landmarks")
         learning_path = manifest.get("learning_path")
-        paper_argument_map = manifest.get("paper_argument_map")
+        paper_argument_map = manifest.get("source_argument_map") or manifest.get("paper_argument_map")
         learning_path_node_ids: set[str] = set()
         if not isinstance(learning_path, dict):
             errors.append(f"{path}: manifest needs learning_path with overview, prerequisites, chapters, and evidence links")
@@ -1955,15 +1955,15 @@ def audit_html(
                 if next_node_id and next_node_id not in learning_path_node_ids:
                     errors.append(f"{path}: learning_path node points to missing next_node_id: {next_node_id}")
         if not isinstance(paper_argument_map, dict):
-            errors.append(f"{path}: manifest needs paper_argument_map")
+            errors.append(f"{path}: manifest needs source_argument_map")
         else:
             for field in ("main_question", "thesis", "argument_steps", "evidence_route", "conclusion", "limitation"):
                 if paper_argument_map.get(field) in (None, "", []):
-                    errors.append(f"{path}: paper_argument_map is missing {field}")
+                    errors.append(f"{path}: source_argument_map is missing {field}")
             argument_steps = paper_argument_map.get("argument_steps") or []
             evidence_route = paper_argument_map.get("evidence_route") or []
             if not isinstance(argument_steps, list) or not isinstance(evidence_route, list):
-                errors.append(f"{path}: paper_argument_map argument_steps/evidence_route must be lists")
+                errors.append(f"{path}: source_argument_map argument_steps/evidence_route must be lists")
                 argument_steps, evidence_route = [], []
             for record in [*argument_steps, *evidence_route]:
                 if not isinstance(record, dict):

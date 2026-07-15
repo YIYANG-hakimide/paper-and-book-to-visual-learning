@@ -6,31 +6,31 @@ Use this contract for image-series and presentation-PDF outputs. A page is not c
 
 The opening must orient the learner before detailed exposition.
 
-- The opening must state the paper's real question and answer, not only its title.
-- A whole-paper context/argument map and a core-contribution map must both appear before detailed exposition. They may share one item when the content remains clear.
+- The opening must state the source's real question/central ideas and answer or synthesis, not only its title.
+- A whole-source context/reading map and a core-idea/contribution map must both appear before detailed exposition. They may share one item when the content remains clear.
 - Background or prerequisite teaching must precede the first detailed method, result, or case page.
 - A method/framework overview must precede component-level detail when the source has a multi-stage method.
 - When a multi-stage method can be demonstrated, include at least one `worked-example` that follows a concrete input through the entire pipeline.
 
-The storyboard must contain `paper_argument_map` with:
+The storyboard must contain `source_argument_map`; legacy tooling may also expose the same object as `paper_argument_map`. It includes:
 
 - `main_question`
 - `thesis`
 - `argument_steps[]` with at least three ordered steps
-- `evidence_route[]` explaining how the paper tests or supports the thesis
+- `evidence_route[]` explaining how the source supports, develops, illustrates, or tests the thesis
 - `conclusion`
 - `limitation` for PPT/HTML; optional in image series unless the album teaches that boundary
 
 Do not substitute a generic agenda, section list, or chapter menu for this map.
 
-The storyboard also records `prerequisites_required`, `method_stage_count`, `worked_example_required`, and `paper_has_experiments`, each with a short rationale where applicable. PPT/HTML methods with at least three stages require a worked example. Image series decides dynamically whether one worked example or another mechanism view teaches better. Experimental papers must teach experiment setup before result evidence.
+The storyboard also records `source_type`, `prerequisites_required`, `method_stage_count`, `worked_example_required`, and `source_has_experiments`, each with a short rationale where applicable. Legacy tooling may mirror the last field as `paper_has_experiments`. PPT/HTML methods with at least three stages require a worked example. Image series decides dynamically whether one worked example or another mechanism view teaches better. Experimental sources must teach experiment setup before result evidence; non-experimental books/articles must not be forced into experimental fields.
 
 ## Standalone Page Contract
 
 Every non-cover page/item records:
 
 - `sequence_role`: a reader-facing teaching role chosen for this paper
-- `information_groups[]`: normally 1-4 groups for image series and 2-6 for reading-first PPT
+- `information_groups[]`: normally 1-4 groups for image series and 3-7 for present-and-read PPT
 - `scan_order[]`: at least three short steps telling the intended reading order
 - `reader_takeaway`: what the learner should be able to say after reading it
 - `teaching_units[]`: each unit names the claim/concept, explanation, visual anchor, and source ids
@@ -41,7 +41,7 @@ Minimum information groups:
 - context map, contribution map, experiment setup, evidence, recap: 3
 - other teaching pages: 2
 
-Low-density presentation pages are allowed only for a deliberate tension, transition, or conclusion beat. Record `low_density_reason`; do not let low-density pages exceed roughly one quarter of teaching pages.
+Low-density presentation pages are allowed only for a deliberate tension, transition, or conclusion beat. Record `low_density_reason`; do not let low-density pages exceed roughly 15% of teaching pages. Every PPT page also records `text_character_count`, `information_group_count`, and `visual_route`; character count is a diagnostic and cannot override readability or the structural density test.
 
 For every hard concept, the teaching inventory records the field definition, plain explanation, meaning in this paper, author usage, common misunderstanding, and the final pages that teach it. For every experiment, record comparison objects, sample size, metric and its meaning, evaluator, baseline status, uncertainty or missing details, setup pages, result pages, and limitation handling. PPT/HTML expose relevant omissions visibly; image series may keep secondary limitations internal when the selected visual scope omits them.
 

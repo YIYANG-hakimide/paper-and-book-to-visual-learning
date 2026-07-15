@@ -336,9 +336,10 @@ def audit_teaching_coverage(root: Path, manifest: dict, size_mode: str, errors: 
         errors.append("Teaching inventory must identify at least one hard concept.")
     if not inventory.get("central_claims"):
         errors.append("Teaching inventory must identify at least one central claim.")
-    if "paper_has_experiments" not in inventory:
-        errors.append("Teaching inventory must record paper_has_experiments.")
-    elif inventory.get("paper_has_experiments") is True and not inventory.get("experiments"):
+    source_has_experiments = inventory.get("source_has_experiments", inventory.get("paper_has_experiments"))
+    if source_has_experiments is None:
+        errors.append("Teaching inventory must record source_has_experiments.")
+    elif source_has_experiments is True and not inventory.get("experiments"):
         errors.append("Teaching inventory says the paper has experiments but experiments[] is empty.")
     final_items = {str(item.get("id")): item for item in manifest.get("items", []) if item.get("id")}
     for concept in inventory.get("hard_concepts", []):
@@ -541,28 +542,28 @@ def main() -> int:
         if not {"problem", "method"}.issubset(roles):
             errors.append("Image series must at least establish the problem and the paper's method/argument.")
 
-        argument_map = storyboard.get("paper_argument_map", {}) if storyboard else {}
+        argument_map = (storyboard.get("source_argument_map") or storyboard.get("paper_argument_map", {})) if storyboard else {}
         for field in ("main_question", "thesis", "argument_steps", "evidence_route", "conclusion"):
             if not argument_map.get(field):
-                errors.append(f"Storyboard paper_argument_map is missing {field}.")
+                errors.append(f"Storyboard source_argument_map is missing {field}.")
         argument_steps = argument_map.get("argument_steps") or []
         evidence_route = argument_map.get("evidence_route") or []
         if not isinstance(argument_steps, list) or not isinstance(evidence_route, list):
-            errors.append("Storyboard paper_argument_map argument_steps/evidence_route must be lists.")
+            errors.append("Storyboard source_argument_map argument_steps/evidence_route must be lists.")
             argument_steps, evidence_route = [], []
         if len(argument_steps) < 3:
-            errors.append("Storyboard paper_argument_map needs at least three ordered argument steps.")
+            errors.append("Storyboard source_argument_map needs at least three ordered argument/reading steps.")
         if len(evidence_route) < 2:
-            errors.append("Storyboard paper_argument_map needs an explicit evidence route.")
+            errors.append("Storyboard source_argument_map needs an explicit support/evidence route.")
 
         opening_policies = [str(item.get("page_policy", "")) for item in items[:3]]
         if "fixed-context" not in opening_policies:
-            errors.append("A fixed-context whole-paper map must appear within the first three images.")
+            errors.append("A fixed-context whole-source map must appear within the first three images.")
         if "fixed-core-contribution" not in opening_policies:
             errors.append("A fixed-core-contribution map must appear within the first three images.")
         all_sequence_roles = [str(item.get("sequence_role", "")) for item in items]
         if any(not role for role in all_sequence_roles):
-            errors.append("Every image must record a paper-specific sequence_role.")
+            errors.append("Every image must record a source-specific sequence_role.")
         if "recap" in all_sequence_roles:
             recap_expected = storyboard.get("recap_expected_concepts", [])
             if len(recap_expected) < 4:
@@ -592,9 +593,10 @@ def main() -> int:
         method_stage_count = storyboard.get("method_stage_count")
         if not isinstance(method_stage_count, int) or method_stage_count < 0:
             errors.append("Storyboard must record a non-negative method_stage_count.")
-        if "paper_has_experiments" not in storyboard:
-            errors.append("Storyboard must record paper_has_experiments.")
-        elif storyboard.get("paper_has_experiments") is True:
+        source_has_experiments = storyboard.get("source_has_experiments", storyboard.get("paper_has_experiments"))
+        if source_has_experiments is None:
+            errors.append("Storyboard must record source_has_experiments.")
+        elif source_has_experiments is True:
             if "experiment-setup" not in all_sequence_roles or "evidence" not in all_sequence_roles:
                 errors.append("Experimental papers need experiment-setup and evidence pages.")
             elif all_sequence_roles.index("experiment-setup") > all_sequence_roles.index("evidence"):

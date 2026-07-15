@@ -20,7 +20,7 @@ Required command:
 python scripts/audit_learning_deck.py <work-dir> --source <paper.pdf> --strict --require-pdf
 ```
 
-Do not deliver unless every page is 16:9, browser-rendered without overflow or overlap, understandable without narration, Chinese-dominant, source figures readable and explained, generated-image OCR clean, PDF order verified, and at least two complete review/fix rounds recorded.
+Do not deliver unless every page is 16:9, rendered without overflow or overlap, understandable without narration, Chinese-dominant, source figures readable and explained, density diagnostics and structural information groups pass, a real generated bitmap is embedded for every non-trivial deck, all planned generated/image-to-image assets are fulfilled, generated-image OCR is clean, PPTX and PDF order are verified, and at least two complete review/fix rounds are recorded.
 
 ## Interactive HTML
 

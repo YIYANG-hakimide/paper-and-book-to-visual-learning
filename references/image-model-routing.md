@@ -16,6 +16,8 @@ Do not require the provider to be Codex. The skill should describe the desired i
 
 ## Preflight Record
 
+For image-series and PPT modes, preflight includes a real one-asset smoke test using the first available capable route. Do not infer that local persistence is impossible from browser/OCR limitations, documentation, or a hypothetical audit failure. Call the image model, inspect the actual response for a saved/local path, copy the bitmap into the mode asset directory, and record the receipt. Only a real failed call may advance to the next route.
+
 Record:
 
 - provider/tool name
@@ -41,7 +43,7 @@ Use the capability profile to adapt generation:
 
 - no native 16:9: generate the nearest wider ratio with strong safe margins, then crop only after checking no content is lost
 - low Chinese reliability: do not use that provider for final image-series pages; switch to a model that can produce readable Chinese or ask the user for another route
-- reference-image support: provide paper figures or style previews only when they clarify objects or visual language, not to copy protected artwork
+- reference-image support: provide source figures or style previews only when they clarify objects or visual language, not to copy protected artwork
 - edit support: useful for PPT/HTML assets; image-series mode still regenerates the complete final image when text or structure is wrong
 - low maximum resolution: use the asset for a smaller focused diagram or switch providers for a full-slide hero visual
 
@@ -57,7 +59,7 @@ For each image, prepare a structured packet:
 - visual type and composition
 - exact short Chinese labels
 - objects, actors, arrows, and relationships
-- paper-specific visual style
+- source-specific visual style
 - aspect ratio and target resolution
 - safe margins
 - facts and references that must be preserved
@@ -73,6 +75,8 @@ Translate this packet into the selected provider's prompt format. Save the packe
 - For PPT/HTML, a low-text generated diagram plus exact surrounding HTML remains acceptable when it teaches more clearly.
 - If factual objects are unreliable, gather reference images/information or use a more schematic visual type.
 - If the selected model cannot meet the style or resolution requirement, try another configured model before asking for manual fallback.
+- In PPT mode, every storyboard item routed to `generated` or `image-to-image` remains a blocking expected asset until a real bitmap is embedded. Do not lower `generated_visuals_expected`, relabel the item as deterministic, or substitute simple SVG/cards merely to make an audit pass.
+- A non-trivial PPT must include at least one successfully embedded real generated bitmap. If all real routes fail, stop and ask for explicit approval before any manual fallback; do not deliver the deck as complete.
 - Never create placeholder bitmap files, screenshots of manual SVG, post-composed image-series pages, or false manifest entries to satisfy counts.
 
 ## Attribution

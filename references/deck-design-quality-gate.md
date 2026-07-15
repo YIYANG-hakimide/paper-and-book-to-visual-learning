@@ -2,7 +2,7 @@
 
 ## Product Bar
 
-The result must feel like a deliberately art-directed, self-reading visual consulting report, not an AI dashboard, a document pasted into slides, a low-density keynote deck, or twenty repetitions of one card layout. It should be more explanatory than a conventional teaching PPT and more evidence-grounded than a visual summary.
+The result must feel like a deliberately art-directed presentation report: useful for explaining the source to other people and substantial enough to read afterward. It must not resemble an AI dashboard, a document pasted into slides, a low-density keynote deck, or twenty repetitions of one card layout. It should approach strong consulting and securities-research pages in structured information density while remaining more explanatory for a novice reader.
 
 Every page needs a clear focal point, readable scan order, sufficient explanation, and enough breathing room to remain legible. A page that only works when a presenter fills in missing logic fails PPT mode.
 
@@ -10,16 +10,16 @@ Every page needs a clear focal point, readable scan order, sufficient explanatio
 
 Within the title slide and first two content slides, a reviewer should understand:
 
-- which paper this is
+- which source this is
 - the real problem or learner question
-- the paper-specific visual motif
+- the source-specific visual motif
 - the deck's reading density and visual language
 - that the first content slide already teaches something
-- the paper's complete argument route from question to evidence to conclusion
+- the source's complete argument/reading route from question or ideas to support and conclusion/synthesis
 
 Reject generic agenda slides, audience descriptions, production framing, and template names.
 
-Require the paper overview and argument map within the opening sequence before detail. They may share one page when simple. A list of chapter names or three contribution cards is not an argument map unless it shows how the parts connect and why the evidence supports the conclusion.
+Require the source overview and argument/reading map within the opening sequence before detail. They may share one page when simple. A list of chapter names or three contribution cards is not a map unless it shows how the parts connect and how examples/evidence support the conclusion or synthesis.
 
 ## Preview Difference
 
@@ -55,7 +55,7 @@ Do not repeat one main composition for more than three consecutive teaching slid
 
 Deliberately alternate framing questions, visual explanation, concrete examples, source evidence, conclusions, and synthesis. Use section beats to reset attention without adding empty agenda pages.
 
-Read each page without narration during review. If a reader cannot reconstruct the claim, mechanism, evidence, and implication from the page, add the missing explanation or split the topic. If a page has no obvious first thing to look at, redesign it.
+Read each page without narration during review. If a reader cannot reconstruct the claim, mechanism/reasoning, evidence/example, implication, and relevant boundary from the page, add the missing explanation or split the topic. If a page has no obvious first thing to look at, redesign it.
 
 Low-density pages are rare and intentional. A sentence with a few unlabeled boxes does not count as a high-impact page.
 
@@ -68,6 +68,7 @@ Low-density pages are rare and intentional. A sentence with a few unlabeled boxe
 - Do not place a complex diagram in a thumbnail beside a long paragraph.
 - If a figure cannot meet these constraints, split it or use image-above/explanation-below across multiple slides.
 - Meaningful teaching content should normally occupy roughly 55%-80% of the stage. Large empty regions are acceptable only when they create a deliberate tension, transition, or conclusion beat.
+- Dense teaching pages should normally contain 3-7 visible information groups. Overview/concept pages normally fall near 350-650 Chinese characters; evidence/comparison pages near 450-900, excluding citations and text already readable inside evidence objects. Treat these as diagnostics, not permission to use tiny text.
 - A source crop used as evidence should normally occupy at least 40% of the stage or receive its own zoom page with 2-4 annotations.
 
 ## Evidence Styling
@@ -75,7 +76,7 @@ Low-density pages are rare and intentional. A sentence with a few unlabeled boxe
 Make the distinction visible:
 
 - generated visual: explanation, analogy, mechanism, or orientation
-- paper crop: original evidence
+- source crop: original evidence
 - HTML chart/table/formula: precise reconstructed evidence
 - conclusion: explicitly linked interpretation
 - limitation: a visually consistent caution treatment
@@ -99,6 +100,9 @@ Reject the deck when:
 - every page has report-card density and no presentational breathing room
 - the deck is merely image-series cards resized onto 16:9 pages
 - most pages contain too little information to stand alone
+- a normal content page has fewer than three meaningful information groups without a recorded reason
+- the deck has no successfully embedded real generated bitmap, or a planned generated/image-to-image asset was silently replaced by SVG, cards, or primitive shapes
+- the deck has high character count but lacks a conclusion, reasoning chain, evidence/example, implication, or relevant boundary
 - a page title names a topic but does not state the question or conclusion
 - exact evidence is replaced by a generated illustration
 

@@ -702,8 +702,8 @@ def main() -> int:
             errors.append("Deck manifest schema version must be 0.5.")
         if manifest.get("output_mode") != "presentation-pdf":
             errors.append("Deck manifest output_mode must be presentation-pdf.")
-        if manifest.get("presentation_intent") != "reading-first":
-            errors.append("Deck presentation_intent must be reading-first.")
+        if manifest.get("presentation_intent") != "present-and-read":
+            errors.append("Deck presentation_intent must be present-and-read.")
         reader_language = str(manifest.get("reader_language", ""))
         if not reader_language:
             errors.append("Deck manifest must record reader_language.")
@@ -781,40 +781,52 @@ def main() -> int:
         acts = storyboard.get("acts", []) if isinstance(storyboard, dict) else []
         if len(acts) < 3:
             errors.append("Storyboard has too few teaching acts to establish a coherent learning arc.")
-        required_arc_roles = {"problem", "prerequisite", "method", "evidence", "limitation"}
+        source_type = str(storyboard.get("source_type", "academic-paper"))
+        if source_type in {"book", "book-chapter", "article", "essay"}:
+            required_arc_roles = {"problem", "idea", "example", "synthesis", "limitation"}
+        elif source_type in {"manual", "guide", "handbook"}:
+            required_arc_roles = {"goal", "prerequisite", "procedure", "worked-example", "limitation"}
+        else:
+            required_arc_roles = {"problem", "prerequisite", "method", "evidence", "limitation"}
         arc_roles = {str(item.get("learning_role")) for item in acts if item.get("learning_role")}
         if not required_arc_roles.issubset(arc_roles):
-            errors.append("Storyboard does not cover the complete problem/prerequisite/method/evidence/limitation arc.")
+            errors.append(f"Storyboard does not cover the required teaching arc for source_type={source_type}: {sorted(required_arc_roles)}.")
 
-        argument_map = storyboard.get("paper_argument_map", {}) if isinstance(storyboard, dict) else {}
+        argument_map = (storyboard.get("source_argument_map") or storyboard.get("paper_argument_map", {})) if isinstance(storyboard, dict) else {}
         for field in ("main_question", "thesis", "argument_steps", "evidence_route", "conclusion", "limitation"):
             if not argument_map.get(field):
-                errors.append(f"Storyboard paper_argument_map is missing {field}.")
+                errors.append(f"Storyboard source_argument_map is missing {field}.")
         argument_steps = argument_map.get("argument_steps") or []
         evidence_route = argument_map.get("evidence_route") or []
         if not isinstance(argument_steps, list) or not isinstance(evidence_route, list):
-            errors.append("Storyboard paper_argument_map argument_steps/evidence_route must be lists.")
+            errors.append("Storyboard source_argument_map argument_steps/evidence_route must be lists.")
             argument_steps, evidence_route = [], []
         if len(argument_steps) < 3:
-            errors.append("Storyboard paper_argument_map needs at least three ordered argument steps.")
+            errors.append("Storyboard source_argument_map needs at least three ordered argument/reading steps.")
         if len(evidence_route) < 2:
-            errors.append("Storyboard paper_argument_map needs an explicit evidence route.")
+            errors.append("Storyboard source_argument_map needs an explicit support/evidence route.")
 
         opening_roles = [str(item.get("sequence_role", "")) for item in slide_items[:3]]
-        if not any(role in {"paper-overview", "overview-and-argument-map"} for role in opening_roles):
-            errors.append("A paper overview must appear within the opening three slides.")
+        if not any(role in {"source-overview", "paper-overview", "overview-and-argument-map"} for role in opening_roles):
+            errors.append("A source overview must appear within the opening three slides.")
         if not any(role in {"argument-map", "overview-and-argument-map"} for role in opening_roles):
             errors.append("An argument map must appear by slide 3.")
         all_sequence_roles = [str(item.get("sequence_role", "")) for item in slide_items]
         valid_sequence_roles = {
             "cover-thesis",
             "paper-overview",
+            "source-overview",
             "argument-map",
             "overview-and-argument-map",
             "prerequisite",
             "framework-overview",
             "method-detail",
             "argument-detail",
+            "idea-detail",
+            "chapter-progression",
+            "example",
+            "procedure",
+            "failure-mode",
             "worked-example",
             "experiment-setup",
             "evidence",
@@ -826,8 +838,9 @@ def main() -> int:
         if invalid_roles:
             errors.append(f"Deck contains invalid sequence_role values: {invalid_roles}")
         if "overview-and-argument-map" not in all_sequence_roles:
-            if "paper-overview" in all_sequence_roles and "argument-map" in all_sequence_roles and all_sequence_roles.index("paper-overview") > all_sequence_roles.index("argument-map"):
-                errors.append("Paper overview must precede the argument map.")
+            overview_role = "source-overview" if "source-overview" in all_sequence_roles else "paper-overview"
+            if overview_role in all_sequence_roles and "argument-map" in all_sequence_roles and all_sequence_roles.index(overview_role) > all_sequence_roles.index("argument-map"):
+                errors.append("Source overview must precede the argument map.")
         for role in ("conclusion", "limitation", "recap"):
             if role not in all_sequence_roles:
                 errors.append(f"Deck is missing required closing role: {role}")
@@ -866,9 +879,10 @@ def main() -> int:
             errors.append("Storyboard must record a non-negative method_stage_count.")
         elif method_stage_count >= 3 and storyboard.get("worked_example_required") is not True:
             errors.append("A method with three or more stages must require a worked example.")
-        if "paper_has_experiments" not in storyboard:
-            errors.append("Storyboard must record paper_has_experiments.")
-        elif storyboard.get("paper_has_experiments") is True:
+        source_has_experiments = storyboard.get("source_has_experiments", storyboard.get("paper_has_experiments"))
+        if source_has_experiments is None:
+            errors.append("Storyboard must record source_has_experiments.")
+        elif source_has_experiments is True:
             if "experiment-setup" not in all_sequence_roles or "evidence" not in all_sequence_roles:
                 errors.append("Experimental papers need experiment-setup and evidence pages.")
             elif all_sequence_roles.index("experiment-setup") > all_sequence_roles.index("evidence"):
@@ -891,11 +905,11 @@ def main() -> int:
                         errors.append(f"Presentation slide {slide.get('id')} is missing {field}.")
                 role = str(slide.get("sequence_role", ""))
                 groups = slide.get("information_groups", [])
-                required_groups = 3 if role in {"paper-overview", "argument-map", "overview-and-argument-map", "experiment-setup", "evidence", "recap"} else 2
+                required_groups = 3
                 if len(groups) < required_groups:
                     errors.append(f"Presentation slide {slide.get('id')} has too few information groups for {role}: {len(groups)}/{required_groups}.")
-                if len(groups) > 6 or len({json.dumps(group, sort_keys=True, ensure_ascii=False) for group in groups}) != len(groups):
-                    errors.append(f"Reading-first slide {slide.get('id')} information_groups must contain 2-6 distinct groups.")
+                if len(groups) > 7 or len({json.dumps(group, sort_keys=True, ensure_ascii=False) for group in groups}) != len(groups):
+                    errors.append(f"Present-and-read slide {slide.get('id')} information_groups must contain 3-7 distinct groups.")
                 if len(slide.get("scan_order", [])) < 3:
                     errors.append(f"Presentation slide {slide.get('id')} needs a scan_order with at least three steps.")
                 if len(set(map(str, slide.get("scan_order", [])))) != len(slide.get("scan_order", [])):
@@ -949,16 +963,24 @@ def main() -> int:
                             errors.append(f"Worked-example slide {slide.get('id')} is missing {field}.")
                     if isinstance(method_stage_count, int) and len(example.get("stages", [])) < method_stage_count:
                         errors.append(f"Worked-example slide {slide.get('id')} does not cover the full method pipeline.")
-            for field in ("presentation_intent", "communication_job", "reasoning_role", "standalone_takeaway", "reader_context", "so_what", "density_class", "scan_order"):
+            for field in ("presentation_intent", "communication_job", "reasoning_role", "standalone_takeaway", "reader_context", "so_what", "density_class", "scan_order", "text_character_count", "information_group_count", "visual_route"):
                 if slide.get("type") not in {"title", "evidence-appendix"} and slide.get(field) in (None, "", []):
-                    errors.append(f"Reading-first slide {slide.get('id')} is missing {field}.")
-            if slide.get("type") not in {"title", "evidence-appendix"} and slide.get("presentation_intent") != "reading-first":
-                errors.append(f"Slide {slide.get('id')} presentation_intent must be reading-first.")
+                    errors.append(f"Present-and-read slide {slide.get('id')} is missing {field}.")
+            if slide.get("type") not in {"title", "evidence-appendix"} and slide.get("presentation_intent") != "present-and-read":
+                errors.append(f"Slide {slide.get('id')} presentation_intent must be present-and-read.")
             if slide.get("type") not in {"title", "evidence-appendix"}:
                 if slide.get("reasoning_role") not in {"question", "definition", "mechanism", "example", "evidence", "comparison", "conclusion", "boundary", "synthesis"}:
                     errors.append(f"Slide {slide.get('id')} has invalid reasoning_role.")
                 if slide.get("density_class") not in {"low", "medium", "evidence-dense"}:
                     errors.append(f"Slide {slide.get('id')} has invalid density_class.")
+                groups = slide.get("information_groups", [])
+                if slide.get("information_group_count") != len(groups):
+                    errors.append(f"Slide {slide.get('id')} information_group_count does not match information_groups.")
+                if slide.get("visual_route") not in {"generated", "image-to-image", "deterministic", "source-crop", "mixed"}:
+                    errors.append(f"Slide {slide.get('id')} has invalid visual_route.")
+                minimum_chars = 450 if slide.get("reasoning_role") in {"evidence", "comparison"} else 350
+                if slide.get("density_class") != "low" and slide.get("text_character_count", 0) < minimum_chars and not slide.get("density_visual_equivalence_reason"):
+                    errors.append(f"Slide {slide.get('id')} records only {slide.get('text_character_count', 0)} text characters without a visual-equivalence reason; expected about {minimum_chars}+ for this role.")
                 visible_fields = (
                     ("communication_job", "communication_job_dom_id"),
                     ("standalone_takeaway", "standalone_takeaway_dom_id"),
@@ -1015,7 +1037,7 @@ def main() -> int:
             errors.append("Presentation contains more than three consecutive evidence-dense pages without a reset.")
         teaching_page_count = len([slide for slide in slide_items if slide.get("type") not in {"title", "divider", "evidence-appendix"}])
         if teaching_page_count and low_density_teaching_count / teaching_page_count > 0.15:
-            errors.append(f"Low-density slides exceed the reading-first allowance: {low_density_teaching_count}/{teaching_page_count}.")
+            errors.append(f"Low-density slides exceed the present-and-read allowance: {low_density_teaching_count}/{teaching_page_count}.")
         if size_mode in {"medium", "detailed"} and section_reset_count < 2:
             errors.append("Medium/detailed presentation needs at least two visible section resets.")
 
@@ -1036,8 +1058,27 @@ def main() -> int:
             errors.append(f"generated_visuals_expected is below the derived concept/chapter floor: {expected_visuals}/{derived_visual_floor}")
         if isinstance(expected_visuals, int) and len(visuals) < expected_visuals:
             errors.append(f"Generated visual coverage is incomplete: {len(visuals)}/{expected_visuals}")
-        if expected_visuals == 0:
+        if not isinstance(expected_visuals, int) or expected_visuals < 1:
             errors.append("generated_visuals_expected=0 bypasses the visual-first deck contract.")
+        if not visuals:
+            errors.append("Every non-trivial presentation must embed at least one real generated bitmap.")
+        smoke_test = manifest.get("image_generation_smoke_test", {})
+        for field in ("status", "tool", "model", "receipt", "local_asset_path"):
+            if smoke_test.get(field) in (None, "", []):
+                errors.append(f"Image-generation smoke test is missing {field}.")
+        if smoke_test.get("status") != "passed":
+            errors.append("Image-generation smoke test must record status=passed before deck completion.")
+        smoke_asset = root / str(smoke_test.get("local_asset_path", ""))
+        if not smoke_asset.exists() or smoke_asset.suffix.lower() not in BITMAP_SUFFIXES:
+            errors.append("Image-generation smoke test local_asset_path is missing or not a real bitmap.")
+        planned_generated_ids = {
+            str(slide.get("id"))
+            for slide in slide_items
+            if slide.get("visual_route") in {"generated", "image-to-image"}
+        }
+        fulfilled_generated_ids = {str(item.get("slide_id")) for item in visuals if item.get("slide_id")}
+        if planned_generated_ids - fulfilled_generated_ids:
+            errors.append(f"Planned generated/image-to-image slides lack real generated assets: {sorted(planned_generated_ids - fulfilled_generated_ids)}")
 
         seen_hashes: dict[str, str] = {}
         visual_ownership: dict[str, list[str]] = {}
@@ -1429,6 +1470,15 @@ def main() -> int:
                     errors.append("QA slide reviews reuse generic findings across more than two slides.")
         if args.require_pdf:
             exports = manifest.get("exports", {})
+            pptx_rel = exports.get("pptx_path")
+            if not pptx_rel:
+                errors.append("Editable PPTX export is missing.")
+            else:
+                pptx_path = root / str(pptx_rel)
+                if not pptx_path.exists() or pptx_path.stat().st_size < 1024 or pptx_path.read_bytes()[:2] != b"PK":
+                    errors.append("Editable PPTX export is missing, suspiciously small, or invalid.")
+                elif normalized_hash(exports.get("pptx_sha256")) != sha256(pptx_path):
+                    errors.append("Final PPTX hash is missing or does not match the exported file.")
             pdf_rel = exports.get("pdf_path")
             if not pdf_rel:
                 errors.append("Final presentation PDF export is missing.")
@@ -1546,11 +1596,13 @@ def main() -> int:
                 if result.get("clippedContainers", 0) > 0:
                     errors.append(f"Slide {index} has {result.get('clippedContainers')} clipped semantic containers.")
                 if slide_type not in {"title", "divider", "evidence-appendix"}:
-                    if result.get("informationGroupCount", 0) < 2:
-                        errors.append(f"Slide {index} does not expose at least two visible data-information-group teaching groups.")
+                    if result.get("informationGroupCount", 0) < 3:
+                        errors.append(f"Slide {index} does not expose at least three visible data-information-group teaching groups.")
                     if result.get("teachingObjectCount", 0) == 0:
                         errors.append(f"Slide {index} has no substantial teaching object; long prose alone does not satisfy reading-first mode.")
-                    if density_class != "low" and result.get("textChars", 0) < 260 and result.get("teachingObjectAreaRatio", 0) < 0.22:
+                    role = str(slide_item.get("reasoning_role", ""))
+                    minimum_chars = 450 if role in {"evidence", "comparison"} else 350
+                    if density_class != "low" and result.get("textChars", 0) < minimum_chars and result.get("teachingObjectAreaRatio", 0) < 0.35:
                         errors.append(
                             f"Slide {index} is under-taught: only {result.get('textChars', 0)} visible characters and "
                             f"{result.get('teachingObjectAreaRatio', 0):.2f} teaching-object area ratio."

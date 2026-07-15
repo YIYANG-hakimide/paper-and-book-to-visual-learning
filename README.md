@@ -1,33 +1,36 @@
-# Paper to Learning
+# Source to Visual Learning
 
-> 把难读论文变成看得懂、讲得清、具有设计感的学习内容。
+> 把论文、书籍、文章、研究报告和其他难读长文本，变成看得懂、讲得清、可追溯的视觉学习产品。
 
-[![Version](https://img.shields.io/badge/version-v0.5.0-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site)
+[![Version](https://img.shields.io/badge/version-v0.6.0-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site)
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827)](./SKILL.md)
-[![Outputs](https://img.shields.io/badge/output-Images%20%7C%20Presentation%20PDF%20%7C%20Interactive%20HTML-16a34a)](#三种输出)
+[![Outputs](https://img.shields.io/badge/output-Image%20Album%20%7C%20PPT%2FPDF%20%7C%20Interactive%20HTML-16a34a)](#三种输出)
 
-`paper-to-learning-site` 是一个面向论文和复杂长文的 Codex skill。它会先理解原文、术语、方法、图表和证据，再为没有深入专业背景的本科生制作清晰、生动、可追溯的学习内容。
+技术标识仍保留为 `paper-to-learning-site`，以兼容已有安装、链接和调用方式；界面名称更新为 **Source to Visual Learning**。论文仍是主要场景，但不再是唯一场景：完整书籍、选定章节、长文、白皮书、研究报告、手册等都可以作为来源。
 
 ## 三种输出
 
-- **图片**：由 Image 2 或其他生图模型直接生成的一组高信息量中文信息图，并附画册 PDF。每张图可独立看懂，整套又有明确顺序。
-- **PPT**：可独立阅读的 16:9 咨询报告式 PDF，包含总览、基础知识、方法、关键图表和实验解释；需要时可提供可编辑 PPTX。
-- **HTML**：默认提供完整原文、中文对照、术语解释、图表解读和论证路径；超长论文经确认后可制作标明删减的精选阅读版，并可部署到 Vercel。
+- **图片 / 图册**：主要用于个人学习。由 Image 2、`gpt-image-2` 或其他真实生图模型原生生成高信息量中文讲解图，并提供页序一致的 PDF。完整书籍会先确定全书或章节范围，必要时分卷生成。
+- **PPT / 演示报告**：主要用于向他人讲述、汇报或讨论。默认同时提供可编辑 PPTX 和 PDF。采用咨询公司、券商研究报告式的结构密度：结论先行，同时给出解释链、证据/案例、含义与边界。
+- **HTML / 互动阅读器**：用于逐段阅读、双语对照、术语解释、图表精读和证据跳转；需要时可部署。
 
-图片和 PPT 支持三种规模：精简（6-10）、中等（11-20）、详细（21 以上），也可以根据论文长度和难度自动判断。
+图片图册与 PPT 不是同一产品换一个比例：图册追求每张图独立讲懂，PPT 追求在演示中讲清并在会后可独立阅读。
 
-## 特点
+## PPT 的新密度与视觉规则
 
-- 默认面向本科水平、但没有相关专业背景的读者。
-- 从基础概念开始解释术语、方法、公式和实验。
-- 每篇论文根据题材选择视觉风格，不套统一模板。
-- 图片模式的最终页面由 Image 2 / `gpt-image-2` 或其他可用生图模型原生生成，不用后期模板拼接冒充信息图。
-- PPT 使用原生文字、真实图表和生成式解释图共同讲解，默认交付 PDF。
-- 逐张解释论文图表：怎么看、相比谁、结论是什么、有什么限制。
-- 保留论文原文与证据来源，生成图不会冒充实验依据。
-- 先组织完整讲解逻辑，再生成图片或页面，避免内容堆砌。
-- 开头先给论文总览和论证地图，再补背景、拆方法、读实验和结论。
-- 教学图在生成前规划中文标签、阅读顺序和图中含义，避免只有漂亮画面没有解释。
+- 普通正文页通常包含 3–7 个有意义的信息组，而不是一句结论配几个空卡片。
+- 总览/概念页通常约 350–650 个中文字符；证据/比较/精读页通常约 450–900 个中文字符。字符数只用于诊断，不能用小字号文字墙冒充信息密度。
+- 每页以一个结论式信息为中心，同时组织解释链、证据或案例、`so what` 与必要边界。
+- 逐页选择最合适的视觉路线：模型生成图、image-to-image 解释图、确定性图表/表格/公式，或原始图表裁切；不强迫统一格式。
+- 每个非简单 PPT 必须真实调用 Image 2 / `gpt-image-2` 或其他可用生图模型，并嵌入至少一张返回的本地位图。所有计划为生成图或 image-to-image 的对象都必须兑现。
+- 不能仅凭猜测认定图片无法保存。必须先做一次真实生图 smoke test，检查返回的本地路径。真实调用失败后，手工 SVG/CSS 替代仍需用户明确同意。
+
+## 内容与证据
+
+- 论文/研究报告：问题、必要背景、方法或论证、实验/证据、结论和边界。
+- 书籍/文章：核心问题、观点或章节推进、关键例子、论证张力、综合判断；不会硬造“实验”和“贡献”。
+- 手册：目标、前置条件、步骤、完整示例和常见失败方式。
+- 生成图负责解释；原文、原始图表、公式、数据和实验负责证明。两者不会混淆。
 
 ## 安装
 
@@ -44,11 +47,15 @@ npx skills add -g YIYANG-hakimide/paper-to-learning-site
 ## 使用
 
 ```text
-用 $paper-to-learning-site 帮我讲解这篇论文。
+用 $paper-to-learning-site 帮我把这本书做成个人学习图册，其余全部默认。
 ```
 
-Skill 会一次性询问输出形式、重点、认知水平、规模和视觉偏好。选好输出后，回复“其余全部默认”即可直接开始。
+```text
+用 $paper-to-learning-site 把这篇论文做成向团队汇报的 PPT，详细模式。
+```
+
+Skill 会一次性询问输出形式、重点、读者水平、规模和视觉偏好。确定输出后，回复“其余全部默认”即可开始。
 
 ## English
 
-`paper-to-learning-site` turns academic papers and difficult long-form content into three distinct learning products: native model-generated infographic albums, reading-first visual consulting reports delivered as PDF, or interactive bilingual HTML readers with complete source text. It is designed for college-level readers without deep domain expertise and keeps explanations linked to the paper's real evidence.
+`paper-to-learning-site` is now presented as **Source to Visual Learning**. It turns papers, books, chapters, articles, reports, white papers, manuals, and other difficult long-form sources into native generated infographic albums, dense presentation reports delivered as both PPTX and PDF, or interactive bilingual HTML readers. The technical skill identifier remains unchanged for backward compatibility.

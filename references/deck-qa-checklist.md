@@ -7,14 +7,14 @@
 - [ ] Every slide belongs to an act/chapter and has a necessary transition from the previous slide.
 - [ ] Storyboard previous/next ids and bridges match the real adjacent page order.
 - [ ] Every final generated image was planned for an existing storyboard slide before generation.
-- [ ] The deck opens with the paper's real problem, not production framing.
-- [ ] The opening establishes the paper question, overview, and argument map before detail; simple papers may combine them.
+- [ ] The deck opens with the source's real problem, question, or central ideas, not production framing.
+- [ ] The opening establishes the source question/ideas, overview, and argument/reading map before detail; simple sources may combine them.
 - [ ] The outline follows learner questions and causal logic.
 - [ ] Prerequisites appear before technical use.
 - [ ] World/data construction, training, simulation/inference, and evaluation are separated where relevant.
 - [ ] Every hard concept uses the full explanation ladder.
 - [ ] Each slide has one clear learner question and one dominant teaching object.
-- [ ] Each non-cover slide has 2-4 information groups, a visible scan order, and a standalone reader takeaway.
+- [ ] Each normal non-cover slide has 3-7 meaningful information groups, a visible scan order, and a standalone reader takeaway; sparse exceptions have a recorded reason.
 - [ ] Dense ideas are split instead of compressed into tiny text.
 - [ ] Recaps ask the learner to reconstruct the logic in their own words.
 - [ ] The final recap covers problem, method, evidence, conclusion, and limitation.
@@ -24,8 +24,11 @@
 
 - [ ] Most teaching slides contain a substantial visual, source evidence object, or formula/example breakdown.
 - [ ] Every major concept that benefits from spatial or causal explanation has a generated teaching visual.
+- [ ] A real Image 2 / `gpt-image-2` or other capable image-model smoke test was called and its saved bitmap/receipt was recorded before route availability was judged.
+- [ ] Every non-trivial deck embeds at least one real generated bitmap, and every storyboard item routed to `generated` or `image-to-image` is fulfilled by a real generated asset.
+- [ ] No planned generated visual was silently replaced by simple SVG, generic cards, primitive shapes, or a false manifest entry.
 - [ ] Generated visuals are local raster assets and use the recorded real model.
-- [ ] Visual style is derived from the paper topic and remains coherent across the deck.
+- [ ] Visual style is derived from the source topic and remains coherent across the deck.
 - [ ] Generated image labels are short, readable, and Chinese-dominant for Chinese readers.
 - [ ] No important generated image is decorative only.
 - [ ] No visual is cropped, blurry, too small, or overloaded.
@@ -38,9 +41,9 @@
 
 ## Evidence
 
-- [ ] The complete main paper was inventoried before slide selection.
-- [ ] The requested source file hash, page count, title, storyboard, manifest, and final deck all refer to the same paper.
-- [ ] Important paper figures/tables appear in readable form.
+- [ ] The complete in-scope source was inventoried before slide selection; full books/collections have an explicit whole-source or chapter/volume scope plan.
+- [ ] The requested source file hash, page count, title, storyboard, manifest, and final deck all refer to the same source.
+- [ ] Important source figures/tables appear in readable form.
 - [ ] Multi-panel figures are split or individually annotated when needed.
 - [ ] Every important figure/table explains what it shows, how to read it, baseline/metric, result, supported conclusion, and a limitation when relevant.
 - [ ] Experimental setup and metric meaning appear before result claims.
@@ -66,6 +69,7 @@
 - [ ] Every teaching page was reviewed without narration and remains understandable on its own.
 - [ ] Section beats and evidence-dense pages form a deliberate reading rhythm without empty agenda filler.
 - [ ] Report-level information density was checked; low-density pages are rare and justified.
+- [ ] Each page records `text_character_count`, `information_group_count`, and `visual_route`; representative overview/concept and evidence/comparison pages meet the structural-density rule or have a specific visual-equivalence reason.
 - [ ] Laptop reading and full-page PDF legibility were checked.
 - [ ] Public copy passed `public-copy-style.md`, including internal-process leakage, repeated contrast syntax, empty conclusions, and template repetition.
 
@@ -73,7 +77,7 @@
 
 - [ ] All local images load with no broken paths.
 - [ ] PNG export preserves the complete stage and fonts.
-- [ ] PDF export preserves page order, crop, and text legibility.
+- [ ] Editable PPTX and PDF exports both preserve page order, crop, fonts, text legibility, and visual placement; editable-object integrity was checked where practical.
 - [ ] At least the title, one image-led slide, one evidence slide, and one dense slide were inspected after export.
 - [ ] Every source crop is readable at final display size or has been split, zoomed, or redrawn.
 - [ ] Vercel deployment is verified only after local QA passes.

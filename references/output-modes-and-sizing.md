@@ -5,7 +5,7 @@
 Ask for one primary output:
 
 - `image-series`: direct model-generated, high-information infographics plus a page-matched album PDF
-- `presentation-pdf`: a 16:9 self-reading visual consulting report exported as PDF
+- `presentation-pdf`: a dense 16:9 presentation report for explaining the source to other people, delivered as PDF plus editable PPTX
 - `interactive-html`: interactive bilingual/Chinese source reader and deployable website
 
 Do not silently produce all modes. Reuse cached work only when the user later requests another mode.
@@ -31,7 +31,7 @@ Choose:
 
 When automatic is requested, record `size_mode_requested: automatic`, resolved `size_mode`, complexity score/breakdown, a target range, maximum count, final resolved count, and rationale. The resolved count may move inside the target range after removing filler; it does not need to equal an early single-number estimate.
 
-Use judgment. A short but mathematically difficult paper may need medium detail; a long survey may need a curated medium deck unless the user asks for exhaustive coverage.
+Use judgment. A short but mathematically difficult paper may need medium detail; a long survey may need a curated medium deck unless the user asks for exhaustive coverage. A full book should normally use an explicit multi-volume or chapter-batch plan instead of being compressed into one ordinary deck.
 
 ## Mode-Specific Density
 
@@ -41,8 +41,8 @@ Use judgment. A short but mathematically difficult paper may need medium detail;
 - Medium: 12-18 images
 - Detailed: 21-30 images, rarely above 36
 - Each image is a complete native generated infographic with a visible Chinese title and sufficient integrated explanation.
-- Always establish the paper argument and core contribution early. Choose later images dynamically from concepts, method, architecture, experiments, evaluation, causal/evidence chains, and user focus.
-- The whole-paper context map and core-contribution map are always two separate images, including concise mode.
+- Always establish the source reading/argument route and core ideas early. Choose later images dynamically from concepts, chapter progression, method, architecture, examples, experiments, evaluation, causal/evidence chains, and user focus.
+- The whole-source context map and core-idea/contribution map are always two separate images, including concise mode.
 - Image mode covers fewer details than PPT at the same nominal size; prioritize the ideas that most benefit from visual explanation.
 
 ### Presentation PDF
@@ -50,13 +50,14 @@ Use judgment. A short but mathematically difficult paper may need medium detail;
 - Concise: 6-10 pages
 - Medium: 12-20 pages
 - Detailed: 21-36 pages
-- Use report-level density for independent reading. A page should contain the conclusion, explanation, evidence, and implication needed to stand alone.
-- Split dense evidence into dedicated pages rather than shrinking it. Do not add empty transition pages merely to imitate a keynote deck.
+- Use consulting/research-report density for presenting and later reading. A normal page should contain one conclusion-led message expressed through 3-7 structured information groups: explanation chain, evidence/example, implication, and relevant boundary.
+- As a diagnostic rather than a quota, overview/concept pages normally carry 350-650 Chinese characters; evidence/comparison/close-reading pages normally carry 450-900, excluding text already readable inside charts and tables. A page may use fewer words when a large visual or evidence object performs equivalent teaching work.
+- Split dense evidence when there are multiple major messages or legibility would fail. Do not split merely to create sparse keynote pages, and do not shrink type to imitate a research-report screenshot.
 - Detailed PPT coverage is broader than detailed image-series coverage and should include important source figures/tables and experimental interpretation.
 
 ### Interactive HTML
 
-Do not ask for a fixed page count. Size the site by paper chapters, source coverage, interactions, and user focus. The user may request a curated or complete reader; make scope explicit.
+Do not ask for a fixed page count. Size the site by source chapters/sections, source coverage, interactions, and user focus. The user may request a curated or complete reader; make scope explicit.
 
 ## Tradeoffs
 

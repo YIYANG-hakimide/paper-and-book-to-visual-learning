@@ -8,7 +8,7 @@ Prevent all output modes from becoming a beautiful summary that omits the diffic
 
 Create `data/teaching-inventory.json` with these arrays, even when some are empty:
 
-Also record the current source-inventory hash, derivation rules version, `derivation_checked: true`, and `reviewer_status: passed`. An academic paper/report must normally identify at least one hard concept and one central claim; empty arrays cannot be used to bypass teaching coverage.
+Also record source type and in-scope range, the current source-inventory hash, derivation rules version, `derivation_checked: true`, and `reviewer_status: passed`. An academic paper/report must normally identify at least one hard concept and one central claim; a book/article must normally identify central ideas plus supporting examples or argument steps; a manual must identify procedures and failure modes. Empty arrays cannot be used to bypass teaching coverage.
 
 - `hard_concepts[]`: id, canonical term, source ids, prerequisite dependencies, and why it blocks understanding
 - `formula_or_algorithm_items[]`: id, source ids, symbols/steps that need breakdown, and whether a worked example is required
@@ -16,7 +16,7 @@ Also record the current source-inventory hash, derivation rules version, `deriva
 - `major_figures[]`: id, source ids, panels/rows/columns that require explanation, and linked claims
 - `central_claims[]`: id, source ids, role, baseline, metric/dimension, direction/value, evidence ids, and limitation
 
-Every inventory entry also records `mode_requirement` with `image-series`, `presentation-pdf`, and `interactive-html` values: `must-cover`, `optional`, or `not-applicable`. Decide these values from the complete paper, selected size, and user focus before storyboarding.
+Every inventory entry also records `mode_requirement` with `image-series`, `presentation-pdf`, and `interactive-html` values: `must-cover`, `optional`, or `not-applicable`. Decide these values from the complete in-scope source, selected size, and user focus before storyboarding.
 
 Record the inventory path and hash in every mode-specific manifest.
 
