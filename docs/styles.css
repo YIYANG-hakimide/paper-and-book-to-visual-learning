@@ -351,57 +351,41 @@ nav a:hover {
   font-size: 12px;
 }
 
-.example-grid {
+.example-groups {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 52px 24px;
+  gap: 84px;
+}
+
+.example-group h4 {
+  margin: 0 0 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.example-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
 .example {
+  min-width: 0;
   margin: 0;
 }
 
-.example-a {
-  grid-column: 1 / 9;
-}
-
-.example-b {
-  grid-column: 6 / 13;
-}
-
-.example-c {
-  grid-column: 1 / 8;
-}
-
-.example-d {
-  grid-column: 5 / 13;
-}
-
 .example button {
-  aspect-ratio: 16 / 9;
   background: #e8e8e3;
 }
 
-.example-c button,
-.example-d button {
-  aspect-ratio: 3 / 2;
-}
-
-.example figcaption {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding-top: 13px;
-  border-top: 1px solid var(--ink);
-  font-family: var(--serif);
-  font-size: 20px;
-}
-
-.example figcaption span {
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
+.example img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .use-section {
@@ -637,26 +621,17 @@ footer div {
     margin-top: 8px;
   }
 
-  .example-grid {
-    grid-template-columns: 1fr;
-    gap: 42px;
+  .example-groups {
+    gap: 58px;
   }
 
-  .example-a,
-  .example-b,
-  .example-c,
-  .example-d {
-    grid-column: auto;
+  .example-group h4 {
+    margin-bottom: 14px;
+    font-size: 24px;
   }
 
-  .example figcaption {
-    display: block;
-    font-size: 18px;
-  }
-
-  .example figcaption span {
-    display: block;
-    margin-bottom: 4px;
+  .example-pair {
+    gap: 8px;
   }
 
   .use-section {

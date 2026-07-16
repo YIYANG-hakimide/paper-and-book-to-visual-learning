@@ -17,29 +17,17 @@
 
 ## 真实样例
 
-### 论文视觉讲解
+### 论文转学习图册样张
 
-从机制到实验结果，视觉表达服务于理解，而不是替代证据。
+|  |  |
+| --- | --- |
+| [![论文转学习图册样张一](assets/examples/paper-residual-stream.jpg)](assets/examples/paper-residual-stream.jpg) | [![论文转学习图册样张二](assets/examples/paper-intervention-results.jpg)](assets/examples/paper-intervention-results.jpg) |
 
-**残差流像流水账**
+### 书籍转学习图册样张
 
-[![残差流机制讲解图](assets/examples/paper-residual-stream.jpg)](assets/examples/paper-residual-stream.jpg)
-
-**干预结果怎样读**
-
-[![干预实验结果讲解图](assets/examples/paper-intervention-results.jpg)](assets/examples/paper-intervention-results.jpg)
-
-### 书籍视觉学习
-
-把抽象观点落到可记忆的结构、例子和行动提示中。
-
-**钝感力**
-
-[![钝感力书籍讲解图](assets/examples/book-resilience.jpg)](assets/examples/book-resilience.jpg)
-
-**能睡着，是让大脑按时下班**
-
-[![睡眠与恢复书籍讲解图](assets/examples/book-sleep-recovery.jpg)](assets/examples/book-sleep-recovery.jpg)
+|  |  |
+| --- | --- |
+| [![书籍转学习图册样张一](assets/examples/book-resilience.jpg)](assets/examples/book-resilience.jpg) | [![书籍转学习图册样张二](assets/examples/book-sleep-recovery.jpg)](assets/examples/book-sleep-recovery.jpg) |
 
 ## 安装与更新
 
