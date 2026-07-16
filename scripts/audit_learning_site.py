@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static audit for paper-to-learning-site outputs."""
+"""Static audit for Paper and Book to Visual Learning outputs."""
 
 from __future__ import annotations
 
