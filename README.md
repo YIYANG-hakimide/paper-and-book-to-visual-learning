@@ -1,12 +1,12 @@
-# Source to Visual Learning
+# Paper and Book to Visual Learning
 
 > 把论文、书籍、文章、研究报告和其他难读长文本，变成看得懂、讲得清、可追溯的视觉学习产品。
 
-[![Version](https://img.shields.io/badge/version-v0.6.0-2563eb)](https://github.com/YIYANG-hakimide/paper-to-learning-site)
+[![Version](https://img.shields.io/badge/version-v0.6.1-2563eb)](https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning)
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827)](./SKILL.md)
 [![Outputs](https://img.shields.io/badge/output-Image%20Album%20%7C%20PPT%2FPDF%20%7C%20Interactive%20HTML-16a34a)](#三种输出)
 
-技术标识仍保留为 `paper-to-learning-site`，以兼容已有安装、链接和调用方式；界面名称更新为 **Source to Visual Learning**。论文仍是主要场景，但不再是唯一场景：完整书籍、选定章节、长文、白皮书、研究报告、手册等都可以作为来源。
+品牌名统一为 **Paper and Book to Visual Learning**，技术标识与仓库名统一为 `paper-and-book-to-visual-learning`。论文仍是主要场景，但不再是唯一场景：完整书籍、选定章节、长文、白皮书、研究报告、手册等都可以作为来源。
 
 ## 三种输出
 
@@ -35,27 +35,27 @@
 ## 安装
 
 ```bash
-git clone https://github.com/YIYANG-hakimide/paper-to-learning-site.git ~/.codex/skills/paper-to-learning-site
+git clone https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning.git ~/.codex/skills/paper-and-book-to-visual-learning
 ```
 
 也可以尝试：
 
 ```bash
-npx skills add -g YIYANG-hakimide/paper-to-learning-site
+npx skills add -g YIYANG-hakimide/paper-and-book-to-visual-learning
 ```
 
 ## 使用
 
 ```text
-用 $paper-to-learning-site 帮我把这本书做成个人学习图册，其余全部默认。
+用 $paper-and-book-to-visual-learning 帮我把这本书做成个人学习图册，其余全部默认。
 ```
 
 ```text
-用 $paper-to-learning-site 把这篇论文做成向团队汇报的 PPT，详细模式。
+用 $paper-and-book-to-visual-learning 把这篇论文做成向团队汇报的 PPT，详细模式。
 ```
 
 Skill 会一次性询问输出形式、重点、读者水平、规模和视觉偏好。确定输出后，回复“其余全部默认”即可开始。
 
 ## English
 
-`paper-to-learning-site` is now presented as **Source to Visual Learning**. It turns papers, books, chapters, articles, reports, white papers, manuals, and other difficult long-form sources into native generated infographic albums, dense presentation reports delivered as both PPTX and PDF, or interactive bilingual HTML readers. The technical skill identifier remains unchanged for backward compatibility.
+**Paper and Book to Visual Learning** (`paper-and-book-to-visual-learning`) turns papers, books, chapters, articles, reports, white papers, manuals, and other difficult long-form sources into native generated infographic albums, dense presentation reports delivered as both PPTX and PDF, or interactive bilingual HTML readers.

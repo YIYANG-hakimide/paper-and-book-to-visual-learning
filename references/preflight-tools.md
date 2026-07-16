@@ -7,13 +7,13 @@ Run a mode-aware tool preflight before extracting the source or building the out
 Run:
 
 ```bash
-python3 /path/to/paper-to-learning-site/scripts/preflight_learning_site.py --mode image-series --confirm-image-direct-output
+python3 /path/to/paper-and-book-to-visual-learning/scripts/preflight_learning_site.py --mode image-series --confirm-image-direct-output
 ```
 
 When a source file is already known, run the source-aware check:
 
 ```bash
-python3 /path/to/paper-to-learning-site/scripts/preflight_learning_site.py --source /path/to/paper.pdf --mode presentation-pdf
+python3 /path/to/paper-and-book-to-visual-learning/scripts/preflight_learning_site.py --source /path/to/paper.pdf --mode presentation-pdf
 ```
 
 Report:

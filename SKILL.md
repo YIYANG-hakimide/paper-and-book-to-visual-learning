@@ -1,9 +1,9 @@
 ---
-name: paper-to-learning-site
+name: paper-and-book-to-visual-learning
 description: "Turn papers, books, chapters, articles, research reports, white papers, manuals, PDFs, or other difficult long-form sources into one of three guided visual-learning outputs: a native model-generated infographic album for self-study, a dense presentation report delivered as PDF plus editable PPTX, or an interactive bilingual HTML reader. Use when the user asks to visualize or explain a paper, book, article, report, or long text; make 论文讲解图, 书籍图册, 文章可视化, 论文PPT, research presentation, visual learning album, bilingual close reading, figure/table teaching, or a source learning website."
 ---
 
-# Source To Visual Learning
+# Paper and Book to Visual Learning
 
 ## Goal
 

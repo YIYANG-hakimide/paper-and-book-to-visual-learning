@@ -1,4 +1,4 @@
 interface:
-  display_name: "Source to Visual Learning"
-  short_description: "Visualize papers, books, articles, and reports"
-  default_prompt: "Use $paper-to-learning-site to turn this long-form source into either a native generated self-study album, a dense presentation report delivered as PPTX plus PDF, or an interactive bilingual HTML reader."
+  display_name: "Paper and Book to Visual Learning"
+  short_description: "Turn papers and books into visual lessons"
+  default_prompt: "Use $paper-and-book-to-visual-learning to turn this long-form source into either a native generated self-study album, a dense presentation report delivered as PPTX plus PDF, or an interactive bilingual HTML reader."

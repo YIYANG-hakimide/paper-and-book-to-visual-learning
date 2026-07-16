@@ -256,7 +256,7 @@ print(json.dumps(payload, ensure_ascii=False))
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Preflight checks for paper-to-learning-site runs.")
+    parser = argparse.ArgumentParser(description="Preflight checks for Paper and Book to Visual Learning runs.")
     parser.add_argument("--source", help="Optional PDF/article path to validate before extraction")
     parser.add_argument("--mode", choices=("image-series", "presentation-pdf", "interactive-html"), default="interactive-html")
     parser.add_argument("--deploy", action="store_true", help="Check deployment tooling when HTML deployment is requested")
