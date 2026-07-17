@@ -1,5 +1,7 @@
 # Paper and Book to Visual Learning
 
+[简体中文](README.md) | [English](README_EN.md)
+
 > 把论文、书籍、文章等长文本，转化成可懂、看得清的视觉产品。
 
 [![Latest tag](https://img.shields.io/github/v/tag/YIYANG-hakimide/paper-and-book-to-visual-learning?display_name=tag&sort=semver&color=1f6f65)](https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/tags)
@@ -141,99 +143,6 @@ git -C ~/.codex/skills/paper-and-book-to-visual-learning pull --ff-only
 - [提出功能建议](https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/issues/new?template=feature-request.yml)
 - [查看贡献说明](.github/CONTRIBUTING.md)
 
-## English
+## 许可证
 
-> Turn papers, books, articles, and other long-form sources into visual products that are easier to understand and see clearly.
-
-**Paper and Book to Visual Learning** is for readers who want to understand a source rather than skim a summary. It transforms papers, full books, selected chapters, articles, white papers, reports, and manuals into guided visual outputs while preserving the concepts, argument, evidence, and boundaries that matter.
-
-It supports paper visualization, book learning albums, research presentations, and bilingual interactive readers through one shared teaching workflow.
-
-## Three Modes
-
-- **Images (personal learning album)**: A coherent sequence of standalone teaching visuals for self-study, review, and sharing, with an optional page-matched PDF album.
-- **PPT (present to others, PDF + editable PPTX by default)**: A complete narrative for presentations, teaching, and discussion that also remains useful when read afterward.
-- **HTML (interactive reader)**: An explorable reading experience connecting source passages, guided explanations, terms, figures, and evidence.
-
-## Examples
-
-The previews above cover learning albums, an interactive HTML reader, an editable presentation, and a portrait visual map. Select an image to open the full-size preview. A complete PDF album is linked below the previews.
-
-## Install And Update
-
-Recommended: ask Codex to install it directly:
-
-```text
-Install this Skill: https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning
-```
-
-You can also use Codex's built-in Skill installer:
-
-```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
-  --repo YIYANG-hakimide/paper-and-book-to-visual-learning \
-  --path . \
-  --name paper-and-book-to-visual-learning
-```
-
-The Skill is available from the next task after installation.
-
-It can also be installed as a Codex Plugin:
-
-```bash
-codex plugin marketplace add YIYANG-hakimide/paper-and-book-to-visual-learning
-codex plugin add paper-and-book-to-visual-learning@paper-visual-learning
-```
-
-Or use Git:
-
-```bash
-git clone https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning.git \
-  ~/.codex/skills/paper-and-book-to-visual-learning
-```
-
-Update an existing checkout:
-
-```bash
-git -C ~/.codex/skills/paper-and-book-to-visual-learning pull --ff-only
-```
-
-Other Skill-compatible agent platforms can also use this repository. Install it through that platform's Skill-directory or repository-import workflow, and make sure the environment has a working image-generation capability.
-
-## Usage
-
-Call `paper-and-book-to-visual-learning` in a Skill-compatible agent environment, provide a source file or link, and choose one primary output.
-
-```text
-Use $paper-and-book-to-visual-learning to turn this book into Images (personal learning album). Use defaults for everything else.
-```
-
-```text
-Use $paper-and-book-to-visual-learning to turn this paper into a detailed PPT (present to others, PDF + editable PPTX by default).
-```
-
-```text
-Use $paper-and-book-to-visual-learning to turn this report into HTML (interactive reader).
-```
-
-## Image Capability
-
-Image albums and visual presentations require an available image-generation capability. In Codex, the recommended route is the system `imagegen` capability. Other agent platforms need access to a capable image-generation model; model permissions and file-delivery behavior vary by platform.
-
-## Supported Sources
-
-- Academic papers, research reports, and white papers
-- Full books, selected chapters, and long-form articles
-- Manuals, tutorials, and other structured long-form texts
-- Local PDFs, documents, or accessible web sources
-
-## Contribute
-
-- [Request a source example](https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/issues/new?template=example-request.yml)
-- [Report a problem](https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/issues/new?template=bug-report.yml)
-- [Suggest an improvement](https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/issues/new?template=feature-request.yml)
-- [Read the contribution guide](.github/CONTRIBUTING.md)
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+MIT，详见 [LICENSE](LICENSE)。
