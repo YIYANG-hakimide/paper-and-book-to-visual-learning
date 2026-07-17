@@ -85,6 +85,13 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/inst
 
 安装完成后，Skill 会从下一轮任务开始可用。
 
+也可以作为 Codex Plugin 安装：
+
+```bash
+codex plugin marketplace add YIYANG-hakimide/paper-and-book-to-visual-learning
+codex plugin add paper-and-book-to-visual-learning@paper-visual-learning
+```
+
 或使用 Git：
 
 ```bash
@@ -170,6 +177,13 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/inst
 ```
 
 The Skill is available from the next task after installation.
+
+It can also be installed as a Codex Plugin:
+
+```bash
+codex plugin marketplace add YIYANG-hakimide/paper-and-book-to-visual-learning
+codex plugin add paper-and-book-to-visual-learning@paper-visual-learning
+```
 
 Or use Git:
 

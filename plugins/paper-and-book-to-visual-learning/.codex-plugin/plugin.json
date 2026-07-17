@@ -1,0 +1,42 @@
+{
+  "name": "paper-and-book-to-visual-learning",
+  "version": "0.2.4",
+  "description": "Turn papers, books, and reports into visual learning albums, editable PPTs, and interactive bilingual readers.",
+  "author": {
+    "name": "YIYANG",
+    "url": "https://github.com/YIYANG-hakimide"
+  },
+  "homepage": "https://yiyang-hakimide.github.io/paper-and-book-to-visual-learning/",
+  "repository": "https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning",
+  "license": "MIT",
+  "keywords": [
+    "visual-learning",
+    "academic-paper",
+    "books",
+    "infographic",
+    "presentation",
+    "bilingual-reader"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Paper and Book to Visual Learning",
+    "shortDescription": "Turn difficult long-form sources into guided visual learning",
+    "longDescription": "Transform papers, books, reports, and other difficult long-form sources into model-generated learning albums, editable presentation reports, or interactive bilingual readers for non-specialist learners.",
+    "developerName": "YIYANG",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://yiyang-hakimide.github.io/paper-and-book-to-visual-learning/",
+    "privacyPolicyURL": "https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/blob/main/.github/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/YIYANG-hakimide/paper-and-book-to-visual-learning/blob/main/LICENSE",
+    "defaultPrompt": [
+      "Turn this paper into a visual learning album.",
+      "Turn this book into an editable presentation report.",
+      "Build an interactive bilingual reader for this source."
+    ],
+    "brandColor": "#1F6F65"
+  }
+}

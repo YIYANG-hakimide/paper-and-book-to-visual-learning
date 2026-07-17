@@ -1,0 +1,20 @@
+{
+  "name": "paper-visual-learning",
+  "interface": {
+    "displayName": "Paper Visual Learning"
+  },
+  "plugins": [
+    {
+      "name": "paper-and-book-to-visual-learning",
+      "source": {
+        "source": "local",
+        "path": "./plugins/paper-and-book-to-visual-learning"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Education"
+    }
+  ]
+}
