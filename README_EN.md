@@ -14,9 +14,9 @@
 
 It supports paper visualization, book learning albums, research presentations, and bilingual interactive readers through one shared teaching workflow.
 
-| Learning album | Interactive reader |
+| Paper learning album | Book learning album |
 | --- | --- |
-| [![Paper learning album preview](docs/assets/examples/paper-intervention-results.jpg)](docs/assets/examples/paper-intervention-results.jpg) | [![Interactive HTML reader preview](docs/assets/examples/html-agentopia-reward-reader.jpg)](docs/assets/examples/html-agentopia-reward-reader.jpg) |
+| [![Paper learning album preview](docs/assets/examples/paper-residual-stream.jpg)](docs/assets/examples/paper-residual-stream.jpg) | [![Book learning album preview](docs/assets/examples/book-resilience.jpg)](docs/assets/examples/book-resilience.jpg) |
 
 Ask Codex to install it directly:
 

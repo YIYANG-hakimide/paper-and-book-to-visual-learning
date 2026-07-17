@@ -14,9 +14,9 @@
 
 论文可视化、书籍学习图册、研究型 PPT 和双语互动阅读器，都由同一套教学逻辑生成。
 
-| 学习图册 | 互动阅读器 |
+| 论文学习图册 | 书籍学习图册 |
 | --- | --- |
-| [![论文学习图册预览](docs/assets/examples/paper-intervention-results.jpg)](docs/assets/examples/paper-intervention-results.jpg) | [![互动 HTML 阅读器预览](docs/assets/examples/html-agentopia-reward-reader.jpg)](docs/assets/examples/html-agentopia-reward-reader.jpg) |
+| [![论文学习图册预览](docs/assets/examples/paper-residual-stream.jpg)](docs/assets/examples/paper-residual-stream.jpg) | [![书籍学习图册预览](docs/assets/examples/book-resilience.jpg)](docs/assets/examples/book-resilience.jpg) |
 
 在 Codex 中直接说：
 
